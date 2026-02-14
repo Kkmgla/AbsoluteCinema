@@ -3,6 +3,10 @@ package com.example.details.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.Movie
+import com.example.domain.model.MovieAward
+import com.example.domain.model.MovieImage
+import com.example.domain.model.Review
+import com.example.domain.model.Studio
 import com.example.domain.repository.MovieRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,7 +19,19 @@ class DetailsViewModel(
     private val _movie = MutableStateFlow<Movie>(Movie())
     val movie = _movie.asStateFlow()
 
-    fun updateMovie(movieId: Int) = viewModelScope.launch{
+    private val _awards = MutableStateFlow<List<MovieAward>>(emptyList())
+    val awards = _awards.asStateFlow()
+
+    private val _reviews = MutableStateFlow<List<Review>>(emptyList())
+    val reviews = _reviews.asStateFlow()
+
+    private val _images = MutableStateFlow<List<MovieImage>>(emptyList())
+    val images = _images.asStateFlow()
+
+    private val _studios = MutableStateFlow<List<Studio>>(emptyList())
+    val studios = _studios.asStateFlow()
+
+    fun updateMovie(movieId: Int) = viewModelScope.launch {
         _movie.value = repository.getMovieById(id = movieId)
     }
 

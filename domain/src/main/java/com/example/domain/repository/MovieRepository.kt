@@ -2,7 +2,11 @@ package com.example.domain.repository
 
 import com.example.domain.model.Filter
 import com.example.domain.model.Movie
+import com.example.domain.model.MovieAward
+import com.example.domain.model.MovieImage
 import com.example.domain.model.MoviesResponce
+import com.example.domain.model.Review
+import com.example.domain.model.Studio
 import kotlinx.coroutines.flow.Flow
 
 interface MovieRepository {
@@ -221,4 +225,24 @@ interface MovieRepository {
      * Функция очистки кэша - удаляет все локаьлно сохраненные фильмы из БД.
      */
     suspend fun clearCache()
+
+    /**
+     * Награды фильма.
+     */
+    suspend fun getMovieAwards(movieId: Int): List<MovieAward>
+
+    /**
+     * Рецензии к фильму.
+     */
+    suspend fun getMovieReviews(movieId: Int): List<Review>
+
+    /**
+     * Изображения (кадры, постеры) фильма.
+     */
+    suspend fun getMovieImages(movieId: Int): List<MovieImage>
+
+    /**
+     * Студии производства фильма.
+     */
+    suspend fun getMovieStudios(movieId: Int): List<Studio>
 }

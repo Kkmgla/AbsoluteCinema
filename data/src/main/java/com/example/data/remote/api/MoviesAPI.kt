@@ -2,9 +2,12 @@ package com.example.data.remote.api
 
 import com.example.data.remote.dto.common.FilterDto
 import com.example.data.remote.dto.common.MovieDto
+import com.example.data.remote.dto.responce.ImageResponseDto
+import com.example.data.remote.dto.responce.MovieAwardsResponseDto
+import com.example.data.remote.dto.responce.ReviewResponseDto
 import com.example.data.remote.dto.responce.MoviesResponseDto
+import com.example.data.remote.dto.responce.StudioResponseDto
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -13,14 +16,13 @@ interface MoviesAPI {
 
     /**
      * Выполняет поиск по названию.
+     * Ключ X-API-KEY добавляется в OkHttp Interceptor (см. DataModule).
      *
      * [query] - название тайтла
      */
-    @Headers("X-API-KEY: 40JQ10H-Q9K4FYF-M2KXT1M-SHKCES3")
     @GET("v1.4/movie/search")
     suspend fun searchMovieByName(@Query("query") query: String): MoviesResponseDto
 
-    @Headers("X-API-KEY: 40JQ10H-Q9K4FYF-M2KXT1M-SHKCES3")
     @GET("v1.4/movie/{id}")
     suspend fun getMovieById(@Path("id") id: Int): MovieDto
 
@@ -60,7 +62,6 @@ interface MoviesAPI {
      *
      *      Пример: { "top250", "top-100-indian-movies", "!top-100-movies" }
      */
-    @Headers("X-API-KEY: 40JQ10H-Q9K4FYF-M2KXT1M-SHKCES3")
     @GET("v1.4/movie")
     suspend fun searchWithFilter(
         @Query("sortField") fields: List<String>? = null,
@@ -81,7 +82,34 @@ interface MoviesAPI {
      * @param field искомое поле.
      * @return список из [FilterDto], содержащий найденные фильтры.
      */
-    @Headers("X-API-KEY: 40JQ10H-Q9K4FYF-M2KXT1M-SHKCES3")
     @GET("v1/movie/possible-values-by-field")
     suspend fun getFiltersByFields(@Query("field") field: String): List<FilterDto>
+
+    @GET("v1.4/movie/awards")
+    suspend fun getMovieAwards(
+        @Query("movieId") movieId: Int,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 20,
+    ): MovieAwardsResponseDto
+
+    @GET("v1.4/review")
+    suspend fun getMovieReviews(
+        @Query("movieId") movieId: List<Int>,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 10,
+    ): ReviewResponseDto
+
+    @GET("v1.4/image")
+    suspend fun getMovieImages(
+        @Query("movieId") movieId: List<Int>,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 20,
+    ): ImageResponseDto
+
+    @GET("v1.4/studio")
+    suspend fun getMovieStudios(
+        @Query("movieId") movieId: Int,
+        @Query("page") page: Int = 1,
+        @Query("limit") limit: Int = 10,
+    ): StudioResponseDto
 }

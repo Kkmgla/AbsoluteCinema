@@ -12,10 +12,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -33,9 +29,9 @@ fun BotBar(
     onSearch: () -> Unit = {},
     onUsers: () -> Unit = {},
     onProfile: () -> Unit = {},
+    selectedTab: BotBarState = BotBarState.Home,
 ) {
-
-    var state by remember { mutableStateOf(BotBarState.Home) }
+    fun isSelected(state: BotBarState): Boolean = selectedTab == state
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.background,
         contentColor = MaterialTheme.colorScheme.secondary,
@@ -43,63 +39,32 @@ fun BotBar(
         Row(
             modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround
         ) {
-            IconButton(
-                onClick = {
-                    onHome.invoke()
-                    state = BotBarState.Home
-                }
-            ) {
+            IconButton(onClick = { onHome.invoke() }) {
                 Icon(
                     imageVector = Icons.Default.Home,
                     contentDescription = "home",
-                    tint =
-                    if (state == BotBarState.Home)
-                        colorResource(R.color.accent)
-                    else
-                        MaterialTheme.colorScheme.secondary
+                    tint = if (isSelected(BotBarState.Home)) colorResource(R.color.accent) else MaterialTheme.colorScheme.secondary
                 )
             }
-            IconButton(onClick = {
-                onSearch.invoke()
-                state = BotBarState.Search
-            }) {
+            IconButton(onClick = { onSearch.invoke() }) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "search",
-                    tint =
-                    if (state == BotBarState.Search)
-                        colorResource(R.color.accent)
-                    else
-                        MaterialTheme.colorScheme.secondary
+                    tint = if (isSelected(BotBarState.Search)) colorResource(R.color.accent) else MaterialTheme.colorScheme.secondary
                 )
-
             }
-            IconButton(onClick = {
-                onUsers.invoke()
-                state = BotBarState.Users
-            }) {
+            IconButton(onClick = { onUsers.invoke() }) {
                 Icon(
                     painter = painterResource(R.drawable.bookmark),
                     contentDescription = "favorite",
-                    tint =
-                    if (state == BotBarState.Users)
-                        colorResource(R.color.accent)
-                    else
-                        MaterialTheme.colorScheme.secondary
+                    tint = if (isSelected(BotBarState.Users)) colorResource(R.color.accent) else MaterialTheme.colorScheme.secondary
                 )
             }
-            IconButton(onClick = {
-                onProfile.invoke()
-                state = BotBarState.Profile
-            }) {
+            IconButton(onClick = { onProfile.invoke() }) {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "user",
-                    tint =
-                    if (state == BotBarState.Profile)
-                        colorResource(R.color.accent)
-                    else
-                        MaterialTheme.colorScheme.secondary
+                    tint = if (isSelected(BotBarState.Profile)) colorResource(R.color.accent) else MaterialTheme.colorScheme.secondary
                 )
             }
         }

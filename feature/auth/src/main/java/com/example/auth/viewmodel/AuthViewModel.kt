@@ -72,12 +72,28 @@ class AuthViewModel(
             _authState.value = AuthState.Loading
             try {
                 val result = register(email, password)
-                _authState.value = AuthState.CreateAccountSuccess(result.user!!)
+                _authState.value = AuthState.SignInSuccess(result.user!!)
             } catch (e: Exception) {
                 _authState.value = AuthState.CreateAccountFail(e.message ?: "Unknown error")
             }
         }
 
-    fun logOut() = auth.signOut()
+    fun logOut() {
+        auth.signOut()
+        _authState.value = AuthState.Idle
+    }
 
+    fun sendPasswordResetEmail(
+        email: String,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        if (email.isBlank() || !email.contains("@")) {
+            onError("Введите корректный email")
+            return
+        }
+        auth.sendPasswordResetEmail(email)
+            .addOnSuccessListener { onSuccess() }
+            .addOnFailureListener { e -> onError(e.message ?: "Ошибка отправки") }
+    }
 }

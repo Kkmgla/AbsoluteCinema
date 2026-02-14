@@ -36,6 +36,7 @@ import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenSettings
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenUsers
 import com.example.core.ui.BeginScreen
 import com.example.core.ui.BotBar
+import com.example.core.ui.BotBarState
 import com.example.details.ui.DescriptionScreen
 import com.example.details.ui.DetailsScreen
 import com.example.details.viewmodel.DetailsViewModel
@@ -69,6 +70,7 @@ fun AppNavigation(
     context: Context,
 ) {
     var botBarState by rememberSaveable { mutableStateOf(false) }
+    var selectedTab by rememberSaveable { mutableStateOf(BotBarState.Home) }
 
     /**
      * Обработка нажатия на элемент фильма на любом экране.
@@ -85,10 +87,23 @@ fun AppNavigation(
         bottomBar = {
             if (botBarState) {
                 BotBar(
-                    onHome = { navController.navigate(ScreenHome) },
-                    onSearch = { navController.navigate(ScreenSearch) },
-                    onUsers = { navController.navigate(ScreenUsers) },
-                    onProfile = { navController.navigate(ScreenProfile) }
+                    onHome = {
+                        selectedTab = BotBarState.Home
+                        navController.navigate(ScreenHome)
+                    },
+                    onSearch = {
+                        selectedTab = BotBarState.Search
+                        navController.navigate(ScreenSearch)
+                    },
+                    onUsers = {
+                        selectedTab = BotBarState.Users
+                        navController.navigate(ScreenUsers)
+                    },
+                    onProfile = {
+                        selectedTab = BotBarState.Profile
+                        navController.navigate(ScreenProfile)
+                    },
+                    selectedTab = selectedTab
                 )
             }
         }
@@ -122,6 +137,7 @@ fun AppNavigation(
 
             }
             composable<ScreenHome> {
+                selectedTab = BotBarState.Home
                 FeedScreen(
                     paddingValues = innerPadding,
                     viewModel = feedViewModel,
@@ -191,6 +207,7 @@ fun AppNavigation(
             }
 
             composable<ScreenSearch> {
+                selectedTab = BotBarState.Search
                 SearchScreen(
                     paddingValues = innerPadding,
                     viewModel = searchViewModel,
@@ -219,6 +236,7 @@ fun AppNavigation(
                 )
             }
             composable<ScreenUsers> {
+                selectedTab = BotBarState.Users
                 UsersScreen(
                     paddingValues = innerPadding,
                     onMovieClicked = { movie ->
@@ -228,12 +246,19 @@ fun AppNavigation(
                 )
             }
             composable<ScreenProfile> {
+                selectedTab = BotBarState.Profile
                 ProfileScreen(
                     paddingValues = innerPadding,
                     onSettingsClicked = { navController.navigate(ScreenSettings) },
                     onLogOut = {
-                        navController.navigate(ScreenRegistration)
                         botBarState = false
+                        selectedTab = BotBarState.Home
+                        navController.navigate(ScreenRegistration) {
+                            popUpTo(navController.graph.startDestinationId) {
+                                inclusive = true
+                            }
+                            launchSingleTop = true
+                        }
                     },
                     viewmodel = authViewModel
                 )
@@ -282,7 +307,8 @@ fun AppNavigation(
                     },
                     viewModel = authViewModel,
                     onSuccess = {
-                        navController.navigate(ScreenLogin)
+                        navController.navigate(ScreenHome)
+                        botBarState = true
                     },
                     context = context,
                 )

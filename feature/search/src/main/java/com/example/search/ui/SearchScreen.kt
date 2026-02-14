@@ -39,6 +39,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -92,7 +93,11 @@ fun SearchScreen(
                         query = query.value, launchedFromButton = true
                     )
                 }) {
-                    Icon(Icons.Default.Search, "", tint = MaterialTheme.colorScheme.secondary)
+                    Icon(
+                    Icons.Default.Search,
+                    contentDescription = stringResource(com.example.core.R.string.cd_search),
+                    tint = MaterialTheme.colorScheme.secondary
+                )
                 }
             },
             trailingIcon = {
@@ -110,7 +115,9 @@ fun SearchScreen(
                             query.value = ""
                         }) {
                             Icon(
-                                Icons.Default.Clear, "", tint = MaterialTheme.colorScheme.secondary
+                                Icons.Default.Clear,
+                                contentDescription = stringResource(com.example.core.R.string.cd_clear),
+                                tint = MaterialTheme.colorScheme.secondary
                             )
                         }
                     }
@@ -198,13 +205,15 @@ fun SearchScreen(
                         modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                     ) {
                         Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(24.dp)
                         ) {
                             Text(
-                                "Проблемы с соединением",
+                                (searchState as SearchState.Error).message.ifEmpty { "Проблемы с соединением" },
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp
+                                fontSize = 16.sp,
+                                textAlign = TextAlign.Center
                             )
                             TextButton(onClick = {
                                 viewModel.searchWithDebounce(
@@ -212,7 +221,7 @@ fun SearchScreen(
                                 )
                             }) {
                                 Text(
-                                    "Обновить",
+                                    stringResource(com.example.core.R.string.search_error_retry),
                                     color = colorResource(com.example.core.R.color.accent),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 16.sp
@@ -226,13 +235,21 @@ fun SearchScreen(
                         modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
                     ) {
                         Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.padding(24.dp)
                         ) {
                             Text(
                                 "Ничего не найдено",
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 16.sp
+                            )
+                            Text(
+                                stringResource(com.example.core.R.string.search_empty_hint),
+                                color = MaterialTheme.colorScheme.secondary,
+                                fontSize = 14.sp,
+                                modifier = Modifier.padding(top = 8.dp),
+                                textAlign = TextAlign.Center
                             )
                         }
                     }

@@ -1,5 +1,6 @@
 package com.example.details.ui
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -38,6 +40,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
@@ -199,7 +203,7 @@ fun DetailsScreen(
 ) {
 
     val movie by viewModel.movie.collectAsState()
-
+    val context = LocalContext.current
     val dialogState = remember { mutableStateOf(false) }
 
 
@@ -281,17 +285,27 @@ fun DetailsScreen(
                     if (movie.ageRating != null) ", " + movie.ageRating.toString() + "+" else ""
                 }", color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold
             )
+            movie.reviewInfo?.let { info ->
+                if (info.count != null && info.count!! > 0) {
+                    Text(
+                        "Рецензии: ${info.count}${info.percentage?.let { " ($it положительных)" } ?: ""}",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 14.sp,
+                        modifier = Modifier.padding(top = 4.dp)
+                    )
+                }
+            }
         }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(100.dp)
-                .padding(horizontal = 70.dp, vertical = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
         ) {
             Column(
-                Modifier.fillMaxHeight(),
+                modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
                 IconButton(onClick = {
                     dialogState.value = true
@@ -315,9 +329,9 @@ fun DetailsScreen(
                 )
             }
             Column(
-                Modifier.fillMaxHeight(),
+                modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 IconButton(onClick = {
                     if (movie.isWillWatch) viewModel.removeFromWillWatch()
@@ -327,15 +341,16 @@ fun DetailsScreen(
                         painter = if (movie.isWillWatch) painterResource(R.drawable.bookmark_filled)
                         else painterResource(R.drawable.bookmark),
                         contentDescription = "willwach",
-                        tint = colorResource(R.color.accent)
+                        tint = if (movie.isWillWatch) colorResource(R.color.accent)
+                        else MaterialTheme.colorScheme.primary
                     )
                 }
                 Text("Буду смотреть", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
             }
             Column(
-                Modifier.fillMaxHeight(),
+                modifier = Modifier.weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 IconButton(onClick = {
                     if (movie.isFavorite) viewModel.removeFromFavourite()
@@ -345,10 +360,36 @@ fun DetailsScreen(
                         imageVector = if (movie.isFavorite) Icons.Filled.Favorite
                         else Icons.Filled.FavoriteBorder,
                         contentDescription = "favourite",
-                        tint = colorResource(R.color.accent)
+                        tint = if (movie.isFavorite) colorResource(R.color.accent)
+                        else MaterialTheme.colorScheme.primary
                     )
                 }
                 Text("Избранное", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                IconButton(onClick = {
+                    val shareText = "${movie.getName()}${movie.year?.let { " ($it)" } ?: ""}"
+                    val intent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, shareText)
+                    }
+                    context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)))
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.Share,
+                        contentDescription = stringResource(R.string.share),
+                        tint = MaterialTheme.colorScheme.primary
+                    )
+                }
+                Text(
+                    text = stringResource(R.string.share),
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 12.sp
+                )
             }
         }
 
@@ -358,7 +399,8 @@ fun DetailsScreen(
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 16.sp,
                 maxLines = 3,
-                overflow = TextOverflow.Ellipsis
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(top = 20.dp)
             )
             Text(text = "Все детали фильма",
                 color = colorResource(R.color.accent),
@@ -378,10 +420,10 @@ fun DetailsScreen(
             )
         }
 
-
-
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp)
         ) {
             Text(
                 text = "Актеры",
@@ -412,10 +454,11 @@ fun DetailsScreen(
                 )
             }
         }
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 100.dp)
+                .padding(top = 24.dp, bottom = 100.dp)
         ) {
             Text(
                 text = "Интересные факты",

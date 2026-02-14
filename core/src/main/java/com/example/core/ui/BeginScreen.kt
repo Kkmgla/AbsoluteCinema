@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.core.R
 
@@ -21,7 +22,7 @@ fun BeginScreen(paddingValues: PaddingValues = PaddingValues()) {
     ) {
         Icon(
             painter = painterResource(R.drawable.absolutecinema_icon),
-            contentDescription = "",
+            contentDescription = stringResource(R.string.cd_app_logo),
             modifier = Modifier.align(
                 Alignment.Center
             ).fillMaxSize(0.5f),

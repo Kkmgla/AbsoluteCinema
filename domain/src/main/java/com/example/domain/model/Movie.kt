@@ -42,4 +42,5 @@ data class Movie(
     var totalSeriesLength: Int? = null,
     var seriesLength: Int? = null,
     var isSeries: Boolean? = null,
+    var reviewInfo: ReviewInfo? = null,
 )

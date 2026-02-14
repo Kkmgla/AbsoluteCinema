@@ -25,4 +25,18 @@
     <string name="about_app">О приложении</string>
     <string name="support">Поддержка</string>
     <string name="logout">Выйти из аккаунта</string>
+    <string name="cd_clear_field">Очистить поле</string>
+    <string name="cd_app_logo">Логотип приложения</string>
+    <string name="cd_show_password">Показать пароль</string>
+    <string name="cd_hide_password">Скрыть пароль</string>
+    <string name="validation_email_invalid">Введите корректный email</string>
+    <string name="validation_password_short">Пароль не менее 6 символов</string>
+    <string name="validation_passwords_mismatch">Пароли не совпадают</string>
+    <string name="forgot_password_sent">Письмо для сброса пароля отправлено на email</string>
+    <string name="forgot_password_enter_email">Введите email для сброса пароля</string>
+    <string name="search_empty_hint">Попробуйте изменить запрос или фильтры</string>
+    <string name="search_error_retry">Повторить</string>
+    <string name="cd_search">Поиск</string>
+    <string name="cd_clear">Очистить</string>
+    <string name="share">Поделиться</string>
 </resources>

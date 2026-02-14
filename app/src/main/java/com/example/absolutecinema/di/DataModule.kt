@@ -1,6 +1,7 @@
 package com.example.absolutecinema.di
 
 import androidx.room.Room
+import com.example.absolutecinema.BuildConfig
 import com.example.data.local.converter.LocalCategoryConverter
 import com.example.data.local.dao.CategoryDao
 import com.example.data.local.dao.CountryDao
@@ -14,6 +15,7 @@ import com.example.data.local.db.MovieDataBase
 import com.example.data.remote.api.MoviesAPI
 import com.example.data.repository.MovieRepositoryImpl
 import com.example.domain.repository.MovieRepository
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
@@ -38,11 +40,22 @@ val dataModule = module {
     }
 
     single<MoviesAPI> {
-        val interceptor = HttpLoggingInterceptor()
-        interceptor.level = HttpLoggingInterceptor.Level.BODY
+        val apiKey = BuildConfig.KINOPOISK_API_KEY.ifBlank {
+            "50JQKPV-QBY4FPP-HSXYNH3-F4TQ3G8"
+        }
+        val apiKeyInterceptor = Interceptor { chain ->
+            chain.proceed(
+                chain.request().newBuilder()
+                    .addHeader("X-API-KEY", apiKey)
+                    .build()
+            )
+        }
+        val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
 
         val client = OkHttpClient.Builder()
-            .addInterceptor(interceptor)
+            .addInterceptor(apiKeyInterceptor)
+            .addInterceptor(loggingInterceptor)
             .build()
 
         Retrofit.Builder()

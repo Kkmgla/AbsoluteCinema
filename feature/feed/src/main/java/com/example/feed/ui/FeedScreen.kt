@@ -3,6 +3,7 @@ package com.example.feed.ui
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
@@ -45,10 +47,12 @@ private const val POSTER_HEIGHT = 200
  */
 @Composable
 private fun FilmPosterWName(movie: Movie, onMovieClicked: (Movie) -> Unit) {
+    val shape = RoundedCornerShape(12.dp)
     Column(
         modifier = Modifier
             .width(POSTER_WIDTH.dp)
             .padding(end = 8.dp)
+            .clip(shape)
             .clickable {
                 onMovieClicked(movie)
             }

@@ -37,7 +37,6 @@ fun ProfileScreen(
     onLogOut: () -> Unit,
     viewmodel: AuthViewModel
 ) {
-
     val user = viewmodel.getUser()
 
 
@@ -62,7 +61,7 @@ fun ProfileScreen(
             ) {
                 Icon(
                     Icons.Outlined.AccountCircle,
-                    "",
+                    contentDescription = null,
                     modifier = Modifier
                         .padding(top = 40.dp)
                         .background(
@@ -70,11 +69,24 @@ fun ProfileScreen(
                         )
                         .size(100.dp)
                 )
+                val displayName = user?.displayName?.takeIf { it.isNotBlank() }
+                val email = user?.email ?: stringResource(com.example.core.R.string.mockemail)
                 Text(
-                    user?.email ?: stringResource(com.example.core.R.string.mockemail),
+                    text = displayName ?: email,
                     color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(top = 16.dp),
+                    fontSize = 18.sp
                 )
+                if (displayName != null && !user?.email.isNullOrBlank()) {
+                    Text(
+                        text = user?.email ?: "",
+                        color = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.padding(top = 4.dp, bottom = 16.dp),
+                        fontSize = 14.sp
+                    )
+                } else {
+                    Box(modifier = Modifier.padding(bottom = 16.dp))
+                }
             }
         }
 
@@ -103,7 +115,7 @@ fun ProfileScreen(
                     Text(stringResource(com.example.core.R.string.settings), fontSize = 20.sp, color = MaterialTheme.colorScheme.primary)
                     Icon(
                         Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        "",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.secondary,
                         modifier = Modifier.size(40.dp)
                     )
@@ -127,7 +139,7 @@ fun ProfileScreen(
                     Text(stringResource(com.example.core.R.string.support), fontSize = 20.sp, color = MaterialTheme.colorScheme.primary)
                     Icon(
                         Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        "",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.secondary,
                         modifier = Modifier.size(40.dp)
                     )
@@ -151,7 +163,7 @@ fun ProfileScreen(
                     Text(stringResource(com.example.core.R.string.about_app), fontSize = 20.sp, color = MaterialTheme.colorScheme.primary)
                     Icon(
                         Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                        "",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.secondary,
                         modifier = Modifier.size(40.dp)
                     )

@@ -23,17 +23,69 @@ import com.example.domain.model.Filter
 import com.example.domain.model.Genre
 import com.example.domain.model.LocalCategory
 import com.example.domain.model.Movie
+import com.example.domain.model.MovieAward
+import com.example.domain.model.MovieImage
 import com.example.domain.model.MoviesResponce
 import com.example.domain.model.Person
+import com.example.domain.model.Review
+import com.example.domain.model.ReviewInfo
 import com.example.domain.model.SeqAndPreq
 import com.example.domain.model.SimilarMovie
+import com.example.domain.model.Studio
 import com.example.domain.repository.MovieRepository
 import kotlinx.coroutines.CoroutineScope
+import retrofit2.HttpException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+
+private val TYPE_FILTERS_FALLBACK = listOf(
+    Filter(name = "фильм"),
+    Filter(name = "сериал"),
+    Filter(name = "мультфильм"),
+    Filter(name = "аниме"),
+    Filter(name = "мультсериал"),
+    Filter(name = "ток-шоу"),
+    Filter(name = "мини-сериал")
+)
+
+private val GENRE_FILTERS_FALLBACK = listOf(
+    Filter(name = "комедия"),
+    Filter(name = "драма"),
+    Filter(name = "ужасы"),
+    Filter(name = "фантастика"),
+    Filter(name = "боевик"),
+    Filter(name = "мелодрама"),
+    Filter(name = "триллер"),
+    Filter(name = "документальный"),
+    Filter(name = "детектив"),
+    Filter(name = "приключения"),
+    Filter(name = "криминал"),
+    Filter(name = "фэнтези"),
+    Filter(name = "биография"),
+    Filter(name = "вестерн"),
+    Filter(name = "спорт")
+)
+
+private val COUNTRY_FILTERS_FALLBACK = listOf(
+    Filter(name = "США"),
+    Filter(name = "Россия"),
+    Filter(name = "Великобритания"),
+    Filter(name = "Франция"),
+    Filter(name = "Германия"),
+    Filter(name = "Италия"),
+    Filter(name = "Испания"),
+    Filter(name = "Япония"),
+    Filter(name = "Южная Корея"),
+    Filter(name = "Индия"),
+    Filter(name = "СССР"),
+    Filter(name = "Канада"),
+    Filter(name = "Австралия"),
+    Filter(name = "Бразилия"),
+    Filter(name = "Мексика")
+)
 
 class MovieRepositoryImpl(
     private val api: MoviesAPI,
@@ -231,33 +283,47 @@ class MovieRepositoryImpl(
     }
 
     override suspend fun getMovieById(id: Int): Movie {
-        val entity = movieDao.getMovieById(id)
-
+        var entity = movieDao.getMovieById(id)
+        var dto: MovieDto? = null
         try {
-            val dto = api.getMovieById(id)
+            dto = api.getMovieById(id)
             saveMovieFromDto(dto = dto)
+            entity = movieDao.getMovieById(id) ?: entity
         } catch (e: Exception) {
             logger.log("GetMovieById", e.message.toString())
         }
-
-        val movie = EntityToDomain.map(entity ?: MovieEntity())
-        return parseMovieInfo(movie)
+        val movie = parseMovieInfo(EntityToDomain.map(entity ?: MovieEntity()))
+        dto?.reviewInfo?.let { info ->
+            movie.reviewInfo = ReviewInfo(
+                count = info.count,
+                positiveCount = info.positiveCount,
+                percentage = info.percentage
+            )
+        }
+        return movie
     }
 
     override suspend fun searchMoviesByName(query: String): MoviesResponce {
-        val responseDto = api.searchMovieByName(query)
-
-        return MoviesResponce(
-            movies = responseDto.movieDtos.map { dto ->
-                val entity = DtoToEntity.map(dto)
-                saveMovieFromDto(dto = dto)
-                parseMovieInfo(EntityToDomain.map(entity))
-            },
-            total = responseDto.total,
-            limit = responseDto.limit,
-            page = responseDto.page,
-            pages = responseDto.pages
-        )
+        return try {
+            val responseDto = api.searchMovieByName(query)
+            MoviesResponce(
+                movies = responseDto.movieDtos.map { dto ->
+                    val entity = DtoToEntity.map(dto)
+                    saveMovieFromDto(dto = dto)
+                    parseMovieInfo(EntityToDomain.map(entity))
+                },
+                total = responseDto.total ?: 0,
+                limit = responseDto.limit,
+                page = responseDto.page,
+                pages = responseDto.pages
+            )
+        } catch (e: HttpException) {
+            logger.log("SearchByName", "HTTP ${e.code()}: ${e.message()}")
+            throw RuntimeException("HTTP ${e.code()}", e)
+        } catch (e: Exception) {
+            logger.log("SearchByName", e.message ?: e.javaClass.simpleName)
+            throw e
+        }
     }
 
     override suspend fun searchMoviesWithFilters(
@@ -291,28 +357,31 @@ class MovieRepositoryImpl(
 
     override suspend fun getCountryFiltersForSearch(): List<Filter> {
         return try {
-            api.getFiltersByFields("countries.name").map { Filter(name = it.name) }
-        } catch (e: Exception){
+            val list = api.getFiltersByFields("countries.name").map { Filter(name = it.name) }
+            if (list.isEmpty()) COUNTRY_FILTERS_FALLBACK else list
+        } catch (e: Exception) {
             logger.log("GetCountryFiltersForSearch", e.message.toString())
-            listOf<Filter>()
+            COUNTRY_FILTERS_FALLBACK
         }
     }
 
     override suspend fun getGenreFiltersForSearch(): List<Filter> {
         return try {
-            api.getFiltersByFields("genres.name").map { Filter(name = it.name) }
-        } catch (e: Exception){
+            val list = api.getFiltersByFields("genres.name").map { Filter(name = it.name) }
+            if (list.isEmpty()) GENRE_FILTERS_FALLBACK else list
+        } catch (e: Exception) {
             logger.log("GetGenreFiltersForSearch", e.message.toString())
-            listOf<Filter>()
+            GENRE_FILTERS_FALLBACK
         }
     }
 
     override suspend fun getTypeFiltersForSearch(): List<Filter> {
         return try {
-            api.getFiltersByFields("type").map { Filter(name = it.name) }
-        } catch (e: Exception){
+            val list = api.getFiltersByFields("type").map { Filter(name = it.name) }
+            if (list.isEmpty()) TYPE_FILTERS_FALLBACK else list
+        } catch (e: Exception) {
             logger.log("GetTypeFiltersForSearch", e.message.toString())
-            listOf<Filter>()
+            TYPE_FILTERS_FALLBACK
         }
     }
 
@@ -531,6 +600,74 @@ class MovieRepositoryImpl(
         }
         return categoryDao.getMoviesByCategory(LocalCategory.Comedies.name)
             .map { movies -> movies.map { parseMovieInfo(EntityToDomain.map(it)) } }
+    }
+
+    override suspend fun getMovieAwards(movieId: Int): List<MovieAward> {
+        return try {
+            api.getMovieAwards(movieId = movieId).docs.map { dto ->
+                MovieAward(
+                    nominationTitle = dto.nomination?.title,
+                    nominationYear = dto.nomination?.year,
+                    winning = dto.winning,
+                    title = dto.title,
+                    year = dto.year
+                )
+            }
+        } catch (e: Exception) {
+            logger.log("GetMovieAwards", e.message.toString())
+            emptyList()
+        }
+    }
+
+    override suspend fun getMovieReviews(movieId: Int): List<Review> {
+        return try {
+            (api.getMovieReviews(movieId = listOf(movieId)).docs ?: emptyList()).map { dto ->
+                Review(
+                    id = dto.id,
+                    movieId = dto.movieId,
+                    title = dto.title,
+                    review = dto.review,
+                    author = dto.author,
+                    type = dto.type,
+                    date = dto.date
+                )
+            }
+        } catch (e: Exception) {
+            logger.log("GetMovieReviews", e.message.toString())
+            emptyList()
+        }
+    }
+
+    override suspend fun getMovieImages(movieId: Int): List<MovieImage> {
+        return try {
+            (api.getMovieImages(movieId = listOf(movieId)).docs ?: emptyList()).map { dto ->
+                MovieImage(
+                    url = dto.url,
+                    previewUrl = dto.previewUrl,
+                    type = dto.type,
+                    height = dto.height?.toInt(),
+                    width = dto.width?.toInt()
+                )
+            }
+        } catch (e: Exception) {
+            logger.log("GetMovieImages", e.message.toString())
+            emptyList()
+        }
+    }
+
+    override suspend fun getMovieStudios(movieId: Int): List<Studio> {
+        return try {
+            api.getMovieStudios(movieId = movieId).docs.map { dto ->
+                Studio(
+                    id = dto.id,
+                    name = dto.name,
+                    logoUrl = dto.logo?.url
+                )
+            }
+        } catch (e: Exception) {
+            logger.log("GetMovieStudios", e.message.toString())
+            emptyList()
+        }
     }
 
     override suspend fun clearCache() {

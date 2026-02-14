@@ -76,8 +76,21 @@ class SearchViewModel(
             if (result.total == 0) _searchState.value = SearchState.Empty
             else _searchState.value = SearchState.Success(movies = result.movies)
         } catch (e: Exception) {
-            _searchState.value = SearchState.Error(message = e.message ?: "Unknown error")
-            Log.e("Search", e.message.toString())
+            Log.e("Search", "search failed: ${e.javaClass.simpleName}", e)
+            _searchState.value = SearchState.Error(message = friendlyErrorMessage(e))
+        }
+    }
+
+    private fun friendlyErrorMessage(e: Exception): String {
+        val msg = (e.message ?: "").trim()
+        return when {
+            msg.contains("403") -> "Поиск временно недоступен (ошибка доступа к сервису). Попробуйте позже."
+            msg.contains("401") -> "Ошибка авторизации. Обратитесь к разработчику приложения."
+            msg.contains("500") || msg.contains("502") || msg.contains("503") -> "Сервис поиска временно недоступен. Попробуйте позже."
+            msg.contains("timeout", ignoreCase = true) || msg.contains("timed out") -> "Превышено время ожидания. Проверьте интернет и попробуйте снова."
+            msg.contains("Unable to resolve host", ignoreCase = true) -> "Нет доступа в интернет. Проверьте подключение."
+            msg.isNotBlank() -> msg
+            else -> "Проблемы с соединением. Проверьте интернет и попробуйте снова."
         }
     }
 
@@ -118,8 +131,8 @@ class SearchViewModel(
             else _searchState.value = SearchState.Success(movies = result.movies)
 
         } catch (e: Exception) {
-            _searchState.value = SearchState.Error(message = e.message ?: "Unknown error")
-            Log.e("Search", e.message.toString())
+            Log.e("Search", "searchWithFilters failed: ${e.javaClass.simpleName}", e)
+            _searchState.value = SearchState.Error(message = friendlyErrorMessage(e))
         }
     }
 

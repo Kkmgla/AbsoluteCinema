@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -19,6 +21,15 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val localProperties = Properties()
+        val localFile = rootProject.file("local.properties")
+        if (localFile.exists()) {
+            localProperties.load(localFile.reader(Charsets.UTF_8))
+        }
+        val kinopoiskKey = localProperties.getProperty("KINOPOISK_API_KEY")
+            ?: "50JQKPV-QBY4FPP-HSXYNH3-F4TQ3G8"
+        buildConfigField("String", "KINOPOISK_API_KEY", "\"$kinopoiskKey\"")
     }
 
     buildTypes {
@@ -39,6 +50,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 }
 
