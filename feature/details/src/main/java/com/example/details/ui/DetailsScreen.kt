@@ -2,6 +2,7 @@ package com.example.details.ui
 
 import android.content.Intent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,6 +41,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.draw.alpha
@@ -61,7 +64,24 @@ import com.example.core.ui.UserScore
 import com.example.core.util.getName
 import com.example.details.viewmodel.DetailsViewModel
 import com.example.domain.model.Movie
+import com.example.domain.model.MovieImage
 import com.example.domain.model.Person
+import com.example.domain.model.Review
+
+private const val REVIEW_PREVIEW_MAX_LENGTH = 180
+private val CARD_BORDER_WIDTH = 1.dp
+private val CARD_CORNER_RADIUS = 12.dp
+private val CARD_BORDER_SHAPE = RoundedCornerShape(CARD_CORNER_RADIUS)
+
+private fun getReviewPreview(text: String?): String {
+    val prepared = text?.trim().orEmpty()
+    if (prepared.isEmpty()) return "Текст рецензии отсутствует"
+    return if (prepared.length > REVIEW_PREVIEW_MAX_LENGTH) {
+        prepared.take(REVIEW_PREVIEW_MAX_LENGTH) + "..."
+    } else {
+        prepared
+    }
+}
 
 /**
  * Отображает краткую информацию об актере на экране фильма (DetailsScreen)
@@ -79,7 +99,9 @@ private fun ActorItem(actor: Person, modifier: Modifier = Modifier) {
             placeholderResId = R.drawable.actor_placeholder,
             modifier = Modifier
                 .height(90.dp)
-                .width(60.dp),
+                .width(60.dp)
+                .clip(CARD_BORDER_SHAPE)
+                .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE),
             contentScale = ContentScale.Crop
         )
         Column(
@@ -196,16 +218,217 @@ private fun MovieScoreDialog(
 }
 
 @Composable
+private fun ReviewItem(review: Review, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .width(320.dp)
+            .height(150.dp)
+            .padding(end = 8.dp)
+            .clip(CARD_BORDER_SHAPE)
+            .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
+            .clickable(onClick = onClick)
+            .padding(12.dp)
+    ) {
+        Text(
+            text = review.title ?: review.author ?: "Рецензия",
+            color = Color.Black,
+            fontSize = 14.sp,
+            fontWeight = FontWeight.Bold,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
+        Text(
+            text = getReviewPreview(review.review),
+            color = Color.Black,
+            fontSize = 13.sp,
+            maxLines = 5,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(top = 8.dp)
+        )
+    }
+}
+
+@Composable
+private fun ReviewDialog(review: Review, onDismiss: () -> Unit) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = true
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(20.dp))
+                .padding(16.dp)
+        ) {
+            Column {
+                Text(
+                    text = review.title ?: "Рецензия",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                if (!review.author.isNullOrBlank() || !review.date.isNullOrBlank()) {
+                    Text(
+                        text = listOfNotNull(review.author, review.date).joinToString(" • "),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 13.sp,
+                        modifier = Modifier.padding(top = 2.dp)
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .height(320.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    Text(
+                        text = review.review ?: "Текст рецензии отсутствует",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 15.sp
+                    )
+                }
+                TextButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text(
+                        text = "Закрыть",
+                        color = colorResource(R.color.accent)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun DescriptionDialog(movie: Movie, onDismiss: () -> Unit) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = true
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colorScheme.surface, RoundedCornerShape(20.dp))
+                .padding(16.dp)
+        ) {
+            Column {
+                Text(
+                    text = movie.getName(),
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                movie.shortDescription?.takeIf { it.isNotBlank() }?.let { short ->
+                    Text(
+                        text = short,
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 13.sp,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .height(320.dp)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    val fullDescription = movie.description?.takeIf { it.isNotBlank() }
+                        ?: movie.shortDescription?.takeIf { it.isNotBlank() }
+                    Text(
+                        text = fullDescription ?: "Описание отсутствует",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 15.sp
+                    )
+                }
+                TextButton(
+                    onClick = onDismiss,
+                    modifier = Modifier.align(Alignment.End)
+                ) {
+                    Text(
+                        text = "Закрыть",
+                        color = colorResource(R.color.accent)
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun FullscreenImageDialog(imageUrl: String, onDismiss: () -> Unit) {
+    Dialog(
+        onDismissRequest = onDismiss,
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f))
+                .clickable(onClick = onDismiss)
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 8.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                        .clip(RoundedCornerShape(12.dp))
+                        .clickable { }
+                ) {
+                    LoadImageWithPlaceholder(
+                        imageUrl = imageUrl,
+                        modifier = Modifier.fillMaxSize(),
+                        contentScale = ContentScale.Fit
+                    )
+                    TextButton(
+                        onClick = onDismiss,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.9f))
+                    ) {
+                        Text(
+                            text = "Закрыть",
+                            color = colorResource(R.color.accent)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun DetailsScreen(
     paddingValues: PaddingValues = PaddingValues(),
     viewModel: DetailsViewModel,
-    onDescriptionClicked: (Movie) -> Unit,
 ) {
 
     val movie by viewModel.movie.collectAsState()
+    val reviews by viewModel.reviews.collectAsState()
+    val images by viewModel.images.collectAsState()
     val context = LocalContext.current
     val dialogState = remember { mutableStateOf(false) }
-
+    val selectedReview = remember { mutableStateOf<Review?>(null) }
+    val selectedImageUrl = remember { mutableStateOf<String?>(null) }
+    val showDescriptionDialog = remember { mutableStateOf(false) }
 
     if (dialogState.value) {
         MovieScoreDialog(dialogState = dialogState,
@@ -217,6 +440,26 @@ fun DetailsScreen(
             onCancel = {
                 viewModel.deleteUserScore()
             })
+    }
+    selectedReview.value?.let { review ->
+        ReviewDialog(
+            review = review,
+            onDismiss = { selectedReview.value = null }
+        )
+    }
+
+    selectedImageUrl.value?.let { imageUrl ->
+        FullscreenImageDialog(
+            imageUrl = imageUrl,
+            onDismiss = { selectedImageUrl.value = null }
+        )
+    }
+
+    if (showDescriptionDialog.value) {
+        DescriptionDialog(
+            movie = movie,
+            onDismiss = { showDescriptionDialog.value = false }
+        )
     }
 
 
@@ -242,13 +485,21 @@ fun DetailsScreen(
             ) {
                 LoadImageWithPlaceholder(
                     imageUrl = movie.backdrop?.backdropUrl,
-                    modifier = Modifier.fillMaxWidth().height(500.dp).alpha(0.5f).align(Alignment.TopCenter),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(500.dp)
+                        .alpha(0.5f)
+                        .align(Alignment.TopCenter),
                     contentScale = ContentScale.Crop
                 )
                 LoadImageWithPlaceholder(
                     imageUrl = movie.poster?.posterUrl,
                     placeholderResId = R.drawable.poster_placeholder,
-                    modifier = Modifier.width(240.dp).align(Alignment.BottomCenter),
+                    modifier = Modifier
+                        .width(240.dp)
+                        .align(Alignment.BottomCenter)
+                        .clip(CARD_BORDER_SHAPE)
+                        .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE),
                     contentScale = ContentScale.Crop
                 )
             }
@@ -393,31 +644,39 @@ fun DetailsScreen(
             }
         }
 
-        if (movie.shortDescription != null || movie.description != null) {
-            Text(
-                text = (movie.shortDescription ?: movie.description).toString(),
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 16.sp,
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(top = 20.dp)
-            )
-            Text(text = "Все детали фильма",
-                color = colorResource(R.color.accent),
-                fontSize = 16.sp,
-                modifier = Modifier.clickable {
-                    onDescriptionClicked(movie)
-                })
-        } else {
-            Text(
-                text = "Нет описания",
-                color = MaterialTheme.colorScheme.secondary,
-                fontSize = 16.sp,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(20.dp),
-                textAlign = TextAlign.Center
-            )
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 20.dp)
+                .clip(CARD_BORDER_SHAPE)
+                .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
+                .padding(12.dp)
+        ) {
+            if (movie.shortDescription != null || movie.description != null) {
+                Text(
+                    text = (movie.shortDescription ?: movie.description).toString(),
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 16.sp,
+                    maxLines = 3,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Text(text = "Все детали фильма",
+                    color = colorResource(R.color.accent),
+                    fontSize = 16.sp,
+                    modifier = Modifier.clickable {
+                        showDescriptionDialog.value = true
+                    })
+            } else {
+                Text(
+                    text = "Нет описания",
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
         }
 
         Column(
@@ -458,7 +717,7 @@ fun DetailsScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 24.dp, bottom = 100.dp)
+                .padding(top = 24.dp)
         ) {
             Text(
                 text = "Интересные факты",
@@ -467,30 +726,113 @@ fun DetailsScreen(
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
-            if (movie.facts.isNotEmpty()) {
-                LazyRow {
-                    items(movie.facts) { fact ->
-                        Column(
-                            modifier = Modifier
-                                .width(300.dp)
-                                .height(100.dp)
-                                .padding(end = 4.dp)
-                                .background(MaterialTheme.colorScheme.surface)
-                        ) {
-                            Text(
-                                text = "${if (fact.spoiler == true) "Спойлер: " else ""} ${fact.fact.toString()}",
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 14.sp,
-                                modifier = Modifier.padding(10.dp),
-                                maxLines = 4,
-                                overflow = TextOverflow.Ellipsis
-                            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(CARD_BORDER_SHAPE)
+                    .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
+                    .padding(12.dp)
+            ) {
+                if (movie.facts.isNotEmpty()) {
+                    LazyRow {
+                        items(movie.facts) { fact ->
+                            Column(
+                                modifier = Modifier
+                                    .width(300.dp)
+                                    .height(100.dp)
+                                    .padding(end = 4.dp)
+                                    .background(MaterialTheme.colorScheme.surface)
+                            ) {
+                                Text(
+                                    text = "${if (fact.spoiler == true) "Спойлер: " else ""} ${fact.fact.toString()}",
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = 14.sp,
+                                    modifier = Modifier.padding(10.dp),
+                                    maxLines = 4,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                            }
                         }
+                    }
+                } else {
+                    Text(
+                        text = "Нет информации о фактах",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(20.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp)
+        ) {
+            Text(
+                text = "Рецензии",
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            if (reviews.isNotEmpty()) {
+                LazyRow {
+                    items(reviews) { review ->
+                        ReviewItem(
+                            review = review,
+                            onClick = { selectedReview.value = review }
+                        )
                     }
                 }
             } else {
                 Text(
-                    text = "Нет информации о фактах",
+                    text = "Нет рецензий",
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = 16.sp,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(20.dp),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp, bottom = 100.dp)
+        ) {
+            Text(
+                text = "Изображения",
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 20.sp,
+                modifier = Modifier.padding(bottom = 8.dp)
+            )
+            if (images.isNotEmpty()) {
+                LazyRow {
+                    items(images) { image: MovieImage ->
+                        LoadImageWithPlaceholder(
+                            imageUrl = image.previewUrl ?: image.url,
+                            modifier = Modifier
+                                .width(240.dp)
+                                .height(140.dp)
+                                .padding(end = 8.dp)
+                                .clip(CARD_BORDER_SHAPE)
+                                .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
+                                .clickable {
+                                    selectedImageUrl.value = image.url ?: image.previewUrl
+                                },
+                            contentScale = ContentScale.Crop
+                        )
+                    }
+                }
+            } else {
+                Text(
+                    text = "Нет изображений",
                     color = MaterialTheme.colorScheme.secondary,
                     fontSize = 16.sp,
                     modifier = Modifier

@@ -33,6 +33,18 @@ class DetailsViewModel(
 
     fun updateMovie(movieId: Int) = viewModelScope.launch {
         _movie.value = repository.getMovieById(id = movieId)
+
+        _reviews.value = try {
+            repository.getMovieReviews(movieId = movieId)
+        } catch (_: Exception) {
+            emptyList()
+        }
+
+        _images.value = try {
+            repository.getMovieImages(movieId = movieId)
+        } catch (_: Exception) {
+            emptyList()
+        }
     }
 
     fun setUserScore(score: Int) = viewModelScope.launch{

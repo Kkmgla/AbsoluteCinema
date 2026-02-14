@@ -276,15 +276,13 @@ fun AppNavigation(
                 DetailsScreen(
                     paddingValues = innerPadding,
                     viewModel = detailsViewModel,
-                    onDescriptionClicked = {
-                        navController.navigate(ScreenDescription)
-                    },
                 )
             }
             composable<ScreenDescription> {
                 DescriptionScreen(
                     paddingValues = innerPadding,
-                    viewModel = detailsViewModel
+                    viewModel = detailsViewModel,
+                    onBackClicked = { navController.popBackStack() }
                 )
             }
             composable<ScreenLogin> {
