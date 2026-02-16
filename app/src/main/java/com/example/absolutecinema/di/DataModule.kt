@@ -19,6 +19,8 @@ import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.dsl.module
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -58,10 +60,14 @@ val dataModule = module {
             .addInterceptor(loggingInterceptor)
             .build()
 
+        val gson = GsonBuilder()
+            .setLenient()
+            .create()
+
         Retrofit.Builder()
             .baseUrl("https://api.kinopoisk.dev/")
             .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(MoviesAPI::class.java)
     }

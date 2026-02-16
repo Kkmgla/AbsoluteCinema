@@ -62,7 +62,7 @@ interface MoviesAPI {
      *
      *      Пример: { "top250", "top-100-indian-movies", "!top-100-movies" }
      */
-    @GET("v1.4/movie")
+    @GET("v1.5/movie")
     suspend fun searchWithFilter(
         @Query("sortField") fields: List<String>? = null,
         @Query("sortType") sortTypes: List<Int>? = null,
@@ -92,21 +92,21 @@ interface MoviesAPI {
         @Query("limit") limit: Int = 20,
     ): MovieAwardsResponseDto
 
-    @GET("v1.4/review")
+    @GET("v1.5/review")
     suspend fun getMovieReviews(
         @Query("movieId") movieId: List<Int>,
         @Query("page") page: Int = 1,
         @Query("limit") limit: Int = 10,
     ): ReviewResponseDto
 
-    @GET("v1.4/image")
+    @GET("v1.5/image")
     suspend fun getMovieImages(
         @Query("movieId") movieId: List<Int>,
         @Query("page") page: Int = 1,
         @Query("limit") limit: Int = 20,
     ): ImageResponseDto
 
-    @GET("v1.4/studio")
+    @GET("v1.5/studio")
     suspend fun getMovieStudios(
         @Query("movieId") movieId: Int,
         @Query("page") page: Int = 1,
