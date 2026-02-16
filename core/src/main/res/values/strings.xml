@@ -43,9 +43,12 @@
     <string name="search_error_retry">Повторить</string>
     <string name="cd_search">Поиск</string>
     <string name="cd_clear">Очистить</string>
+    <string name="cd_change_avatar">Сменить аватар</string>
     <string name="share">Поделиться</string>
     <string name="logout_confirmation">Вы уверены, что хотите выйти из аккаунта?</string>
     <string name="action_confirmation">Подтверждение действия</string>
     <string name="confirm">Подтвердить</string>
     <string name="cancel">Отмена</string>
+    <string name="version_app">Версия 2.8</string>
+    <string name="version_api">API версия 1.5</string>
 </resources>
