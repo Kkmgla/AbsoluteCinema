@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
@@ -318,6 +320,64 @@ fun MovieRatingWithWreath(movie: Movie, modifier: Modifier = Modifier) {
                 text = movieRating.toString(),
                 color = color,
                 fontWeight = FontWeight.Bold
+            )
+        }
+    }
+}
+
+@Composable
+fun CommonMoviePosterGridItem(
+    movie: Movie,
+    modifier: Modifier = Modifier,
+    onMovieClicked: (Movie) -> Unit = {},
+) {
+    val cardShape = RoundedCornerShape(12.dp)
+
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onMovieClicked(movie) }
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(220.dp)
+                .clip(cardShape)
+        ) {
+            LoadImageWithPlaceholder(
+                imageUrl = movie.poster?.posterUrl,
+                placeholderResId = R.drawable.poster_placeholder,
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+            ApiRatingBadge(
+                movie = movie,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 8.dp, start = 8.dp)
+            )
+            UserRatingBadge(
+                movie = movie,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 8.dp, end = 8.dp)
+            )
+        }
+        Text(
+            text = movie.getName(),
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 16.sp,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(top = 6.dp)
+        )
+        movie.year?.let {
+            Text(
+                text = "($it)",
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 16.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }
