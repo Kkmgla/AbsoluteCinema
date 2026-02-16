@@ -128,7 +128,8 @@ private fun HorizontalRowWTitleBig(
             Text(title, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             Text(
                 stringResource(com.example.core.R.string.All),
-                fontSize = 20.sp,
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold,
                 color = colorResource(com.example.core.R.color.accent),
                 modifier = Modifier.clickable {
                     onAllClicked.invoke()

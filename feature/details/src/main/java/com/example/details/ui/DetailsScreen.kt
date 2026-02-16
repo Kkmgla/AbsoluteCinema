@@ -424,6 +424,7 @@ private fun FullscreenImageDialog(imageUrl: String, onDismiss: () -> Unit) {
 fun DetailsScreen(
     paddingValues: PaddingValues = PaddingValues(),
     viewModel: DetailsViewModel,
+    onBackClicked: () -> Unit = {},
 ) {
 
     val movie by viewModel.movie.collectAsState()
@@ -506,6 +507,18 @@ fun DetailsScreen(
                         .clip(CARD_BORDER_SHAPE)
                         .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE),
                     contentScale = ContentScale.Crop
+                )
+                Text(
+                    text = "Назад",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = colorResource(R.color.accent),
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .padding(top = 16.dp, end = 16.dp)
+                        .clickable {
+                            onBackClicked.invoke()
+                        }
                 )
             }
             Text(
@@ -816,15 +829,23 @@ fun DetailsScreen(
                     }
                 }
             } else {
-                Text(
-                    text = "Нет информации об актерах",
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 16.sp,
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
-                    textAlign = TextAlign.Center
-                )
+                        .clip(CARD_BORDER_SHAPE)
+                        .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = "Нет информации об актерах",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
 

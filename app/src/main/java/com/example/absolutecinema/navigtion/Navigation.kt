@@ -342,6 +342,7 @@ fun AppNavigation(
                 DetailsScreen(
                     paddingValues = innerPadding,
                     viewModel = detailsViewModel,
+                    onBackClicked = { navController.popBackStack() }
                 )
             }
             composable<ScreenDescription> {

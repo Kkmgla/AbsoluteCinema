@@ -129,7 +129,8 @@ private fun HorizontalRowWTitleSmall(
             if (list.isNotEmpty()) {
                 Text(
                     stringResource(com.example.core.R.string.All),
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
                     color = colorResource(com.example.core.R.color.accent),
                     modifier = Modifier.clickable {
                         onAllClicked.invoke()

@@ -1,5 +1,6 @@
 package com.example.core.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,38 +36,38 @@ fun CommonMovieListScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues)
-            .padding(horizontal = 8.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.SpaceBetween
+        Column(
+            modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp)
         ) {
-            Text(
-                title,
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
+            Row(
                 modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .padding(top = 16.dp, bottom = 8.dp),
-                maxLines = 1
-            )
-            TextButton(
-                onClick = {
-                    onBackClicked.invoke()
-                }
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp),
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                Text(
+                    title,
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    maxLines = 1
+                )
                 Text(
                     text = "Назад",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                     color = colorResource(R.color.accent),
-                    maxLines = 1
+                    modifier = Modifier.clickable {
+                        onBackClicked.invoke()
+                    }
                 )
             }
         }
-        LazyColumn {
+        LazyColumn(
+            modifier = Modifier.padding(horizontal = 8.dp)
+        ) {
             items(moviesList) {
                 CommonMovieItem(
                     movie = it,
