@@ -32,8 +32,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.core.ui.ApiRatingBadge
 import com.example.core.ui.LoadImageWithPlaceholder
-import com.example.core.ui.RatingBadgeOverlay
+import com.example.core.ui.UserRatingBadge
 import com.example.core.util.getName
 import com.example.domain.model.Movie
 import com.example.users.viewmodel.UsersViewModel
@@ -65,7 +66,13 @@ private fun BookmarkMovieCard(movie: Movie, onMovieClicked: () -> Unit) {
                     .clip(shape),
                 contentScale = ContentScale.Crop
             )
-            RatingBadgeOverlay(
+            ApiRatingBadge(
+                movie = movie,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 8.dp, start = 8.dp)
+            )
+            UserRatingBadge(
                 movie = movie,
                 modifier = Modifier
                     .align(Alignment.TopEnd)

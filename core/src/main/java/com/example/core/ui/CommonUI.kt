@@ -191,6 +191,85 @@ fun RatingBadgeOverlay(movie: Movie, modifier: Modifier = Modifier) {
 }
 
 /**
+ * API rating badge for overlay on poster (top-left corner).
+ * Shows Kinopoisk rating only. Supports Top250 gradient.
+ * Uses rectangular shape (RoundedCornerShape) to accommodate decimal values.
+ * Use with Modifier.align(Alignment.TopStart).padding(...) inside a Box.
+ */
+@Composable
+fun ApiRatingBadge(movie: Movie, modifier: Modifier = Modifier) {
+    val apiRating = movie.getRating() ?: return
+    
+    val useTop250Gradient = movie.top250 != null && movie.top250!! > 0
+    val solidColor = when (apiRating.toInt()) {
+        in 0..3 -> colorResource(R.color.score_red)
+        in 4..6 -> colorResource(R.color.score_gray)
+        else -> colorResource(R.color.score_green)
+    }
+    
+    val backgroundModifier = if (useTop250Gradient)
+        Modifier.background(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    colorResource(R.color.score_legend_start),
+                    colorResource(R.color.score_legend_end)
+                ),
+                start = Offset(50.0f, 0f),
+                end = Offset(50.0f, 100f)
+            ),
+            shape = RoundedCornerShape(8.dp)
+        )
+    else
+        Modifier.background(color = solidColor, shape = RoundedCornerShape(8.dp))
+    
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier.then(backgroundModifier)
+    ) {
+        Text(
+            text = apiRating.toString(),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(horizontal = 4.dp),
+            fontWeight = FontWeight.Bold,
+            color = colorResource(R.color.white),
+            fontSize = 14.sp
+        )
+    }
+}
+
+/**
+ * User rating badge for overlay on poster (top-right corner).
+ * Shows user rating only if it exists.
+ * Use with Modifier.align(Alignment.TopEnd).padding(...) inside a Box.
+ */
+@Composable
+fun UserRatingBadge(movie: Movie, modifier: Modifier = Modifier) {
+    val userRating = movie.userRate ?: return
+    
+    val color = when (userRating) {
+        in 0..3 -> colorResource(R.color.score_red)
+        in 4..6 -> colorResource(R.color.score_gray)
+        else -> colorResource(R.color.score_green)
+    }
+    
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier
+            .size(26.dp)
+            .background(color = color, shape = CircleShape)
+    ) {
+        Text(
+            text = userRating.toString(),
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            color = colorResource(R.color.white),
+            fontSize = 12.sp
+        )
+    }
+}
+
+/**
  * Функция для отображения вхождения фильма в топ 250. Отображает его место в списке и иконку.
  *
  * @param place место фильма в списке.
