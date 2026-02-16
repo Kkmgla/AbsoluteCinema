@@ -41,7 +41,7 @@ val dataModule = module {
 
     single<MoviesAPI> {
         val apiKey = BuildConfig.KINOPOISK_API_KEY.ifBlank {
-            "50JQKPV-QBY4FPP-HSXYNH3-F4TQ3G8"
+            throw IllegalStateException("KINOPOISK_API_KEY is not configured. Please set it in local.properties or as an environment variable.")
         }
         val apiKeyInterceptor = Interceptor { chain ->
             chain.proceed(

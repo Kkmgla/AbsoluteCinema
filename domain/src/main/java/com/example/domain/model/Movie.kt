@@ -12,6 +12,9 @@ data class Movie(
     var userRate: Int? = null,
     var isFavorite: Boolean = false,
     var isWillWatch: Boolean = false,
+    var isWatching: Boolean = false,
+    var isWatched: Boolean = false,
+    var isDropped: Boolean = false,
 
     var id: Int? = null,
     var name: String? = null,

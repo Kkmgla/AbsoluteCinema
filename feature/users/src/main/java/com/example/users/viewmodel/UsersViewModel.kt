@@ -23,4 +23,13 @@ class UsersViewModel(
 
     val favourites = repository.getFavouriteMovies()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+    val watching = repository.getWatchingMovies()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+    val watched = repository.getWatchedMovies()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+    val dropped = repository.getDroppedMovies()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 }

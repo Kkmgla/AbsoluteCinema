@@ -138,6 +138,59 @@ fun FilmRatingBox(movie: Movie, modifier: Modifier = Modifier.padding(top = 10.d
 }
 
 /**
+ * Small circular rating badge for overlay on poster (e.g. top-right).
+ * Shows user score when present, otherwise KP rating. Same color logic as FilmRatingBox/UserScore.
+ * Use with Modifier.align(Alignment.TopEnd).padding(...) inside a Box.
+ */
+@Composable
+fun RatingBadgeOverlay(movie: Movie, modifier: Modifier = Modifier) {
+    val (displayValue, useTop250Gradient) = when {
+        movie.userRate != null -> Pair(movie.userRate.toString(), false)
+        movie.getRating() != null -> Pair(movie.getRating().toString(), movie.top250 != null && movie.top250!! > 0)
+        else -> return
+    }
+    val solidColor = when {
+        movie.userRate != null -> when (movie.userRate!!) {
+            in 0..3 -> colorResource(R.color.score_red)
+            in 4..6 -> colorResource(R.color.score_gray)
+            else -> colorResource(R.color.score_green)
+        }
+        movie.getRating() != null -> when (movie.getRating()!!.toInt()) {
+            in 0..3 -> colorResource(R.color.score_red)
+            in 4..6 -> colorResource(R.color.score_gray)
+            else -> colorResource(R.color.score_green)
+        }
+        else -> return
+    }
+    val backgroundModifier = if (useTop250Gradient)
+        Modifier.background(
+            brush = Brush.linearGradient(
+                colors = listOf(
+                    colorResource(R.color.score_legend_start),
+                    colorResource(R.color.score_legend_end)
+                ),
+                start = Offset(50.0f, 0f),
+                end = Offset(50.0f, 100f)
+            ),
+            shape = CircleShape
+        )
+    else
+        Modifier.background(color = solidColor, shape = CircleShape)
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = modifier.size(26.dp).then(backgroundModifier)
+    ) {
+        Text(
+            text = displayValue,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            color = colorResource(R.color.white),
+            fontSize = 12.sp
+        )
+    }
+}
+
+/**
  * Функция для отображения вхождения фильма в топ 250. Отображает его место в списке и иконку.
  *
  * @param place место фильма в списке.

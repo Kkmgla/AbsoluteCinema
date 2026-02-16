@@ -171,6 +171,16 @@ interface MovieRepository {
      */
     suspend fun removeMovieFromWillWatch(id: Int): Boolean
 
+    fun getWatchingMovies(): Flow<List<Movie>>
+    fun getWatchedMovies(): Flow<List<Movie>>
+    fun getDroppedMovies(): Flow<List<Movie>>
+    suspend fun addMovieToWatching(id: Int): Boolean
+    suspend fun removeMovieFromWatching(id: Int): Boolean
+    suspend fun addMovieToWatched(id: Int): Boolean
+    suspend fun removeMovieFromWatched(id: Int): Boolean
+    suspend fun addMovieToDropped(id: Int): Boolean
+    suspend fun removeMovieFromDropped(id: Int): Boolean
+
     /**
      * Возвращает рекомендованные фильмы.
      *

@@ -2,6 +2,7 @@ package com.example.data.repository
 
 import com.example.data.local.dao.*
 import com.example.data.local.entity.*
+import com.example.data.local.entity.category.CategoryEntity
 import com.example.data.local.entity.category.MovieCategoryCrossRef
 import com.example.data.local.entity.country.CountryEntity
 import com.example.data.local.entity.country.MovieCountryCrossRef
@@ -105,6 +106,9 @@ class MovieRepositoryImpl(
 
         movie.isFavorite = categories.contains(LocalCategory.Favourite.name) == true
         movie.isWillWatch = categories.contains(LocalCategory.WillWatch.name) == true
+        movie.isWatching = categories.contains(LocalCategory.Watching.name) == true
+        movie.isWatched = categories.contains(LocalCategory.Watched.name) == true
+        movie.isDropped = categories.contains(LocalCategory.Dropped.name) == true
         movie.userRate = movie.id?.let { movieDao.getMovieUserRate(it) }
 
         movie.countries = countryDao.getCountryForMovie(movieId = movie.id!!).map {
@@ -479,6 +483,102 @@ class MovieRepositoryImpl(
             true
         } catch (e: Exception) {
             logger.log("RemoveMovieFromWillWatch", e.message.toString())
+            false
+        }
+    }
+
+    private suspend fun getCategoryIdOrCreate(category: LocalCategory): Int {
+        categoryDao.getIdForCategory(category.name)?.let { return it }
+        categoryDao.addCategory(CategoryEntity(name = category))
+        return categoryDao.getIdForCategory(category.name)!!
+    }
+
+    override fun getWatchingMovies(): Flow<List<Movie>> {
+        return categoryDao.getMoviesByCategory(LocalCategory.Watching.name)
+            .map { movies -> movies.map { parseMovieInfo(EntityToDomain.map(it)) } }
+    }
+
+    override fun getWatchedMovies(): Flow<List<Movie>> {
+        return categoryDao.getMoviesByCategory(LocalCategory.Watched.name)
+            .map { movies -> movies.map { parseMovieInfo(EntityToDomain.map(it)) } }
+    }
+
+    override fun getDroppedMovies(): Flow<List<Movie>> {
+        return categoryDao.getMoviesByCategory(LocalCategory.Dropped.name)
+            .map { movies -> movies.map { parseMovieInfo(EntityToDomain.map(it)) } }
+    }
+
+    override suspend fun addMovieToWatching(id: Int): Boolean {
+        return try {
+            categoryDao.addCategoryToMovie(
+                MovieCategoryCrossRef(
+                    movieId = id,
+                    categoryId = getCategoryIdOrCreate(LocalCategory.Watching)
+                )
+            )
+            true
+        } catch (e: Exception) {
+            logger.log("AddMovieToWatching", e.message.toString())
+            false
+        }
+    }
+
+    override suspend fun removeMovieFromWatching(id: Int): Boolean {
+        return try {
+            categoryDao.deleteCategoryFromMovie(movieId = id, category = LocalCategory.Watching.name)
+            true
+        } catch (e: Exception) {
+            logger.log("RemoveMovieFromWatching", e.message.toString())
+            false
+        }
+    }
+
+    override suspend fun addMovieToWatched(id: Int): Boolean {
+        return try {
+            categoryDao.addCategoryToMovie(
+                MovieCategoryCrossRef(
+                    movieId = id,
+                    categoryId = getCategoryIdOrCreate(LocalCategory.Watched)
+                )
+            )
+            true
+        } catch (e: Exception) {
+            logger.log("AddMovieToWatched", e.message.toString())
+            false
+        }
+    }
+
+    override suspend fun removeMovieFromWatched(id: Int): Boolean {
+        return try {
+            categoryDao.deleteCategoryFromMovie(movieId = id, category = LocalCategory.Watched.name)
+            true
+        } catch (e: Exception) {
+            logger.log("RemoveMovieFromWatched", e.message.toString())
+            false
+        }
+    }
+
+    override suspend fun addMovieToDropped(id: Int): Boolean {
+        return try {
+            categoryDao.addCategoryToMovie(
+                MovieCategoryCrossRef(
+                    movieId = id,
+                    categoryId = getCategoryIdOrCreate(LocalCategory.Dropped)
+                )
+            )
+            true
+        } catch (e: Exception) {
+            logger.log("AddMovieToDropped", e.message.toString())
+            false
+        }
+    }
+
+    override suspend fun removeMovieFromDropped(id: Int): Boolean {
+        return try {
+            categoryDao.deleteCategoryFromMovie(movieId = id, category = LocalCategory.Dropped.name)
+            true
+        } catch (e: Exception) {
+            logger.log("RemoveMovieFromDropped", e.message.toString())
             false
         }
     }

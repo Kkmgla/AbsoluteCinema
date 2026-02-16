@@ -89,4 +89,45 @@ class DetailsViewModel(
         }
     }
 
+    fun addToWatching() = viewModelScope.launch {
+        _movie.value.id?.let { id ->
+            repository.addMovieToWatching(id)
+            updateMovie(id)
+        }
+    }
+
+    fun removeFromWatching() = viewModelScope.launch {
+        _movie.value.id?.let { id ->
+            repository.removeMovieFromWatching(id)
+            updateMovie(id)
+        }
+    }
+
+    fun addToWatched() = viewModelScope.launch {
+        _movie.value.id?.let { id ->
+            repository.addMovieToWatched(id)
+            updateMovie(id)
+        }
+    }
+
+    fun removeFromWatched() = viewModelScope.launch {
+        _movie.value.id?.let { id ->
+            repository.removeMovieFromWatched(id)
+            updateMovie(id)
+        }
+    }
+
+    fun addToDropped() = viewModelScope.launch {
+        _movie.value.id?.let { id ->
+            repository.addMovieToDropped(id)
+            updateMovie(id)
+        }
+    }
+
+    fun removeFromDropped() = viewModelScope.launch {
+        _movie.value.id?.let { id ->
+            repository.removeMovieFromDropped(id)
+            updateMovie(id)
+        }
+    }
 }

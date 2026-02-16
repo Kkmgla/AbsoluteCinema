@@ -33,6 +33,12 @@ import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenSearch
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenSearchFilters
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenSearchFiltersResult
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenSettings
+import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllDropped
+import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllFavourites
+import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllWatched
+import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllWillWatch
+import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllWatching
+import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllYourRates
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenUsers
 import com.example.core.ui.BeginScreen
 import com.example.core.ui.BotBar
@@ -54,6 +60,12 @@ import com.example.search.ui.FilterSearchResultScreen
 import com.example.search.ui.FiltersScreen
 import com.example.search.ui.SearchScreen
 import com.example.search.viewmodel.SearchViewModel
+import com.example.users.ui.AllDroppedScreen
+import com.example.users.ui.AllFavouritesScreen
+import com.example.users.ui.AllWatchedScreen
+import com.example.users.ui.AllWillWatchScreen
+import com.example.users.ui.AllWatchingScreen
+import com.example.users.ui.AllYourRatesScreen
 import com.example.users.ui.UsersScreen
 import com.example.users.viewmodel.UsersViewModel
 import kotlinx.coroutines.delay
@@ -242,7 +254,61 @@ fun AppNavigation(
                     onMovieClicked = { movie ->
                         handleMovieClick(movie)
                     },
+                    onAllWillWatchClicked = { navController.navigate(ScreenAllWillWatch) },
+                    onAllYourRatesClicked = { navController.navigate(ScreenAllYourRates) },
+                    onAllFavouritesClicked = { navController.navigate(ScreenAllFavourites) },
+                    onAllWatchingClicked = { navController.navigate(ScreenAllWatching) },
+                    onAllWatchedClicked = { navController.navigate(ScreenAllWatched) },
+                    onAllDroppedClicked = { navController.navigate(ScreenAllDropped) },
                     viewModel = usersViewModel
+                )
+            }
+            composable<ScreenAllWillWatch> {
+                AllWillWatchScreen(
+                    paddingValues = innerPadding,
+                    viewModel = usersViewModel,
+                    onMovieClicked = { movie -> handleMovieClick(movie) },
+                    onBackClicked = { navController.popBackStack() }
+                )
+            }
+            composable<ScreenAllYourRates> {
+                AllYourRatesScreen(
+                    paddingValues = innerPadding,
+                    viewModel = usersViewModel,
+                    onMovieClicked = { movie -> handleMovieClick(movie) },
+                    onBackClicked = { navController.popBackStack() }
+                )
+            }
+            composable<ScreenAllFavourites> {
+                AllFavouritesScreen(
+                    paddingValues = innerPadding,
+                    viewModel = usersViewModel,
+                    onMovieClicked = { movie -> handleMovieClick(movie) },
+                    onBackClicked = { navController.popBackStack() }
+                )
+            }
+            composable<ScreenAllWatching> {
+                AllWatchingScreen(
+                    paddingValues = innerPadding,
+                    viewModel = usersViewModel,
+                    onMovieClicked = { movie -> handleMovieClick(movie) },
+                    onBackClicked = { navController.popBackStack() }
+                )
+            }
+            composable<ScreenAllWatched> {
+                AllWatchedScreen(
+                    paddingValues = innerPadding,
+                    viewModel = usersViewModel,
+                    onMovieClicked = { movie -> handleMovieClick(movie) },
+                    onBackClicked = { navController.popBackStack() }
+                )
+            }
+            composable<ScreenAllDropped> {
+                AllDroppedScreen(
+                    paddingValues = innerPadding,
+                    viewModel = usersViewModel,
+                    onMovieClicked = { movie -> handleMovieClick(movie) },
+                    onBackClicked = { navController.popBackStack() }
                 )
             }
             composable<ScreenProfile> {

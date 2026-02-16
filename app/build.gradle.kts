@@ -28,7 +28,8 @@ android {
             localProperties.load(localFile.reader(Charsets.UTF_8))
         }
         val kinopoiskKey = localProperties.getProperty("KINOPOISK_API_KEY")
-            ?: "50JQKPV-QBY4FPP-HSXYNH3-F4TQ3G8"
+            ?: System.getenv("KINOPOISK_API_KEY")
+            ?: throw GradleException("KINOPOISK_API_KEY not found. Please set it in local.properties or as an environment variable.")
         buildConfigField("String", "KINOPOISK_API_KEY", "\"$kinopoiskKey\"")
     }
 

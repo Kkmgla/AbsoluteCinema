@@ -10,5 +10,6 @@ package com.example.domain.model
  * Данный класс используется в качестве строкового поля в CategoryEntity.
  */
 enum class LocalCategory {
-    RecommendedFilms, RecommendedSeries, Detectives, Romans, Comedies, WillWatch, Favourite
+    RecommendedFilms, RecommendedSeries, Detectives, Romans, Comedies,
+    WillWatch, Watching, Watched, Dropped, Favourite
 }

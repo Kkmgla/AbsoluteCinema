@@ -54,4 +54,22 @@ sealed class ScreenRoutes {
 
     @Serializable
     object ScreenAllRomans
+
+    @Serializable
+    object ScreenAllWillWatch
+
+    @Serializable
+    object ScreenAllYourRates
+
+    @Serializable
+    object ScreenAllFavourites
+
+    @Serializable
+    object ScreenAllWatching
+
+    @Serializable
+    object ScreenAllWatched
+
+    @Serializable
+    object ScreenAllDropped
 }

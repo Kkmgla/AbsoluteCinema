@@ -1,0 +1,12 @@
+## This file is a template for local.properties
+## Copy this file to local.properties and add your actual API key
+## 
+## IMPORTANT: local.properties is gitignored and will NOT be committed to version control
+## Never commit your actual API key to the repository
+
+# Android SDK location (required by Android Studio/Gradle)
+sdk.dir=C\:\\Users\\YourUsername\\AppData\\Local\\Android\\Sdk
+
+# Kinopoisk API Key (required for the app to work)
+# Get your API key from: https://api.kinopoisk.dev/
+KINOPOISK_API_KEY=your_api_key_here

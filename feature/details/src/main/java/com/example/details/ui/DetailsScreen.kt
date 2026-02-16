@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
@@ -22,8 +23,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Icon
@@ -72,6 +76,8 @@ private const val REVIEW_PREVIEW_MAX_LENGTH = 180
 private val CARD_BORDER_WIDTH = 1.dp
 private val CARD_CORNER_RADIUS = 12.dp
 private val CARD_BORDER_SHAPE = RoundedCornerShape(CARD_CORNER_RADIUS)
+private val ACTION_ICON_SIZE = 24.dp
+private val ACTION_ICON_LABEL_SPACING = 0.5.dp
 
 private fun getReviewPreview(text: String?): String {
     val prepared = text?.trim().orEmpty()
@@ -222,24 +228,23 @@ private fun ReviewItem(review: Review, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .width(320.dp)
-            .height(150.dp)
             .padding(end = 8.dp)
             .clip(CARD_BORDER_SHAPE)
             .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
             .clickable(onClick = onClick)
-            .padding(12.dp)
+            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 6.dp)
     ) {
         Text(
             text = review.title ?: review.author ?: "Рецензия",
-            color = Color.Black,
-            fontSize = 14.sp,
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
         Text(
             text = getReviewPreview(review.review),
-            color = Color.Black,
+            color = MaterialTheme.colorScheme.primary,
             fontSize = 13.sp,
             maxLines = 5,
             overflow = TextOverflow.Ellipsis,
@@ -547,100 +552,209 @@ fun DetailsScreen(
                 }
             }
         }
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 12.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(2.dp),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                IconButton(onClick = {
-                    dialogState.value = true
-                }
-
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(ACTION_ICON_LABEL_SPACING),
                 ) {
-                    if (movie.userRate == null) {
+                    IconButton(onClick = {
+                        if (movie.isWatching) viewModel.removeFromWatching()
+                        else viewModel.addToWatching()
+                    }) {
                         Icon(
-                            Icons.Outlined.Star, "star", tint = MaterialTheme.colorScheme.primary
-                        )
-                    } else {
-                        UserScore(
-                            movie = movie, modifier = Modifier.size(26.dp)
+                            imageVector = Icons.Filled.PlayArrow,
+                            contentDescription = "watching",
+                            modifier = Modifier.size(ACTION_ICON_SIZE),
+                            tint = if (movie.isWatching) colorResource(R.color.accent)
+                            else MaterialTheme.colorScheme.primary
                         )
                     }
-                }
-                Text(
-                    text = if (movie.userRate == null) "Оценить" else "Ваша оценка",
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 12.sp
-                )
-            }
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                IconButton(onClick = {
-                    if (movie.isWillWatch) viewModel.removeFromWillWatch()
-                    else viewModel.addToWillWatch()
-                }) {
-                    Icon(
-                        painter = if (movie.isWillWatch) painterResource(R.drawable.bookmark_filled)
-                        else painterResource(R.drawable.bookmark),
-                        contentDescription = "willwach",
-                        tint = if (movie.isWillWatch) colorResource(R.color.accent)
-                        else MaterialTheme.colorScheme.primary
+                    Text(
+                        stringResource(R.string.Watching),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
-                Text("Буду смотреть", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
-            }
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                IconButton(onClick = {
-                    if (movie.isFavorite) viewModel.removeFromFavourite()
-                    else viewModel.addToFavourite()
-                }) {
-                    Icon(
-                        imageVector = if (movie.isFavorite) Icons.Filled.Favorite
-                        else Icons.Filled.FavoriteBorder,
-                        contentDescription = "favourite",
-                        tint = if (movie.isFavorite) colorResource(R.color.accent)
-                        else MaterialTheme.colorScheme.primary
-                    )
-                }
-                Text("Избранное", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
-            }
-            Column(
-                modifier = Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                IconButton(onClick = {
-                    val shareText = "${movie.getName()}${movie.year?.let { " ($it)" } ?: ""}"
-                    val intent = Intent(Intent.ACTION_SEND).apply {
-                        type = "text/plain"
-                        putExtra(Intent.EXTRA_TEXT, shareText)
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(ACTION_ICON_LABEL_SPACING),
+                ) {
+                    IconButton(onClick = {
+                        if (movie.isWillWatch) viewModel.removeFromWillWatch()
+                        else viewModel.addToWillWatch()
+                    }) {
+                        Icon(
+                            painter = if (movie.isWillWatch) painterResource(R.drawable.bookmark_filled)
+                            else painterResource(R.drawable.bookmark),
+                            contentDescription = "willwatch",
+                            modifier = Modifier.size(ACTION_ICON_SIZE),
+                            tint = if (movie.isWillWatch) colorResource(R.color.accent)
+                            else MaterialTheme.colorScheme.primary
+                        )
                     }
-                    context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)))
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Share,
-                        contentDescription = stringResource(R.string.share),
-                        tint = MaterialTheme.colorScheme.primary
+                    Text(
+                        "Буду смотреть",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
-                Text(
-                    text = stringResource(R.string.share),
-                    color = MaterialTheme.colorScheme.primary,
-                    fontSize = 12.sp
-                )
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(ACTION_ICON_LABEL_SPACING),
+                ) {
+                    IconButton(onClick = {
+                        if (movie.isWatched) viewModel.removeFromWatched()
+                        else viewModel.addToWatched()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Check,
+                            contentDescription = "watched",
+                            modifier = Modifier.size(ACTION_ICON_SIZE),
+                            tint = if (movie.isWatched) colorResource(R.color.accent)
+                            else MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    Text(
+                        stringResource(R.string.Watched),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(ACTION_ICON_LABEL_SPACING),
+                ) {
+                    IconButton(onClick = {
+                        if (movie.isDropped) viewModel.removeFromDropped()
+                        else viewModel.addToDropped()
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Close,
+                            contentDescription = "dropped",
+                            modifier = Modifier.size(ACTION_ICON_SIZE),
+                            tint = if (movie.isDropped) colorResource(R.color.accent)
+                            else MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    Text(
+                        stringResource(R.string.Dropped),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(ACTION_ICON_LABEL_SPACING),
+                ) {
+                    IconButton(onClick = {
+                        if (movie.isFavorite) viewModel.removeFromFavourite()
+                        else viewModel.addToFavourite()
+                    }) {
+                        Icon(
+                            imageVector = if (movie.isFavorite) Icons.Filled.Favorite
+                            else Icons.Filled.FavoriteBorder,
+                            contentDescription = "favourite",
+                            modifier = Modifier.size(ACTION_ICON_SIZE),
+                            tint = if (movie.isFavorite) colorResource(R.color.accent)
+                            else MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    Text(
+                        "Избранное",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(ACTION_ICON_LABEL_SPACING),
+                ) {
+                    IconButton(onClick = { dialogState.value = true }) {
+                        if (movie.userRate == null) {
+                            Icon(
+                                Icons.Outlined.Star,
+                                contentDescription = "star",
+                                modifier = Modifier.size(ACTION_ICON_SIZE),
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        } else {
+                            UserScore(movie = movie, modifier = Modifier.size(ACTION_ICON_SIZE))
+                        }
+                    }
+                    Text(
+                        text = if (movie.userRate == null) "Оценить" else "Ваша оценка",
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+                Spacer(Modifier.width(8.dp))
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(ACTION_ICON_LABEL_SPACING),
+                ) {
+                    IconButton(onClick = {
+                        val shareText = "${movie.getName()}${movie.year?.let { " ($it)" } ?: ""}"
+                        val intent = Intent(Intent.ACTION_SEND).apply {
+                            type = "text/plain"
+                            putExtra(Intent.EXTRA_TEXT, shareText)
+                        }
+                        context.startActivity(Intent.createChooser(intent, context.getString(R.string.share)))
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.Share,
+                            contentDescription = stringResource(R.string.share),
+                            modifier = Modifier.size(ACTION_ICON_SIZE),
+                            tint = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    Text(
+                        text = stringResource(R.string.share),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
 
@@ -731,7 +845,7 @@ fun DetailsScreen(
                     .fillMaxWidth()
                     .clip(CARD_BORDER_SHAPE)
                     .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
-                    .padding(12.dp)
+                    .padding(8.dp)
             ) {
                 if (movie.facts.isNotEmpty()) {
                     LazyRow {
@@ -761,7 +875,7 @@ fun DetailsScreen(
                         fontSize = 16.sp,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(20.dp),
+                            .padding(12.dp),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -789,15 +903,23 @@ fun DetailsScreen(
                     }
                 }
             } else {
-                Text(
-                    text = "Нет рецензий",
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 16.sp,
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
-                    textAlign = TextAlign.Center
-                )
+                        .clip(CARD_BORDER_SHAPE)
+                        .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = "Нет рецензий",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
 
@@ -831,15 +953,23 @@ fun DetailsScreen(
                     }
                 }
             } else {
-                Text(
-                    text = "Нет изображений",
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 16.sp,
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(20.dp),
-                    textAlign = TextAlign.Center
-                )
+                        .clip(CARD_BORDER_SHAPE)
+                        .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = "Нет изображений",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(12.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }
