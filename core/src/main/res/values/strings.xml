@@ -25,6 +25,8 @@
     <string name="Watched">Просмотрено</string>
     <string name="Dropped">Брошено</string>
     <string name="settings">Настройки</string>
+    <string name="main_color">Акцент</string>
+    <string name="choose_color">Выберите цвет</string>
     <string name="about_app">О приложении</string>
     <string name="support">Поддержка</string>
     <string name="logout">Выйти из аккаунта</string>
@@ -42,4 +44,8 @@
     <string name="cd_search">Поиск</string>
     <string name="cd_clear">Очистить</string>
     <string name="share">Поделиться</string>
+    <string name="logout_confirmation">Вы уверены, что хотите выйти из аккаунта?</string>
+    <string name="action_confirmation">Подтверждение действия</string>
+    <string name="confirm">Подтвердить</string>
+    <string name="cancel">Отмена</string>
 </resources>

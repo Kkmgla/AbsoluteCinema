@@ -26,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.core.R
+import com.example.core.ui.LocalAccentColor
 import com.example.core.util.getName
 import com.example.details.viewmodel.DetailsViewModel
 
@@ -53,7 +54,7 @@ fun DescriptionScreen(
                 .weight(1f)
                 .clip(DESCRIPTION_BORDER_SHAPE)
                 .background(MaterialTheme.colorScheme.surface, DESCRIPTION_BORDER_SHAPE)
-                .border(DESCRIPTION_BORDER_WIDTH, colorResource(R.color.accent), DESCRIPTION_BORDER_SHAPE)
+                .border(DESCRIPTION_BORDER_WIDTH, LocalAccentColor.current, DESCRIPTION_BORDER_SHAPE)
                 .padding(16.dp)
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
@@ -91,7 +92,7 @@ fun DescriptionScreen(
                 ) {
                     Text(
                         text = "Закрыть",
-                        color = colorResource(R.color.accent)
+                        color = LocalAccentColor.current
                     )
                 }
             }

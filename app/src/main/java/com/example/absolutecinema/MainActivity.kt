@@ -5,9 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.navigation.compose.rememberNavController
+import androidx.core.content.edit
+import com.example.core.ui.LocalAccentColor
+import com.example.core.ui.parseAccentHex
 import com.example.auth.viewmodel.AuthViewModel
 import com.example.absolutecinema.navigtion.AppNavigation
 import com.example.absolutecinema.ui.theme.AbsoluteCinemaTheme
@@ -38,38 +44,49 @@ class MainActivity : ComponentActivity() {
 
         enableEdgeToEdge()
         setContent {
+            val prefs = remember { getSharedPreferences("theme_prefs", MODE_PRIVATE) }
+            var accentHex by remember {
+                mutableStateOf(prefs.getString("accent_color_hex", "#FF8000") ?: "#FF8000")
+            }
+            val accentColor = remember(accentHex) { parseAccentHex(accentHex) }
             val currentTheme = remember { mutableStateOf(isDarkTheme) }
 
-            AbsoluteCinemaTheme(darkTheme = isDarkTheme) {
-                val navController = rememberNavController()
+            CompositionLocalProvider(LocalAccentColor provides accentColor) {
+                AbsoluteCinemaTheme(darkTheme = isDarkTheme) {
+                    val navController = rememberNavController()
 
-                /**
-                 * Изменяет тему приложения и пересоздает активити.
-                 *
-                 * @param isDark индикатор темной темы.
-                 */
-                fun changeTheme(isDark: Boolean){
-                    currentTheme.value = isDark
-                    AppCompatDelegate.setDefaultNightMode(
-                        if (isDark) AppCompatDelegate.MODE_NIGHT_YES
-                        else AppCompatDelegate.MODE_NIGHT_NO
+                    /**
+                     * Изменяет тему приложения и пересоздает активити.
+                     *
+                     * @param isDark индикатор темной темы.
+                     */
+                    fun changeTheme(isDark: Boolean){
+                        currentTheme.value = isDark
+                        AppCompatDelegate.setDefaultNightMode(
+                            if (isDark) AppCompatDelegate.MODE_NIGHT_YES
+                            else AppCompatDelegate.MODE_NIGHT_NO
+                        )
+                        recreate()
+                    }
+
+                    AppNavigation(
+                        navController = navController,
+                        feedViewModel = feedViewModel,
+                        detailsViewModel = detailsViewModel,
+                        usersViewModel = usersViewModel,
+                        searchViewModel = searchViewModel,
+                        authViewModel = authViewModel,
+                        onThemeChanged = { isDarkTheme ->
+                            changeTheme(isDark = isDarkTheme)
+                        },
+                        currentAccentHex = accentHex,
+                        onAccentColorChanged = { hex ->
+                            accentHex = hex
+                            prefs.edit { putString("accent_color_hex", hex) }
+                        },
+                        context = this
                     )
-                    recreate()
                 }
-
-                AppNavigation(
-                    navController = navController,
-                    feedViewModel = feedViewModel,
-                    detailsViewModel = detailsViewModel,
-                    usersViewModel = usersViewModel,
-                    searchViewModel = searchViewModel,
-                    authViewModel = authViewModel,
-                    onThemeChanged = { isDarkTheme ->
-                        changeTheme(isDark = isDarkTheme)
-                    },
-                    context = this
-                )
-
             }
         }
     }

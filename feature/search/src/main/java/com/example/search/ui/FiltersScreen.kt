@@ -33,6 +33,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.util.toRange
+import com.example.core.ui.LocalAccentColor
 import com.example.search.viewmodel.SearchViewModel
 
 @Composable
@@ -104,9 +105,9 @@ fun FiltersScreen(
             steps = 0,
             valueRange = (filters.value.years.lower..filters.value.years.upper),
             colors = SliderDefaults.colors(
-                thumbColor = colorResource(com.example.core.R.color.accent),
-                activeTrackColor = colorResource(com.example.core.R.color.accent),
-                inactiveTickColor = colorResource(com.example.core.R.color.accent),
+                thumbColor = LocalAccentColor.current,
+                activeTrackColor = LocalAccentColor.current,
+                inactiveTickColor = LocalAccentColor.current,
                 activeTickColor = colorResource(com.example.core.R.color.white),
                 inactiveTrackColor = MaterialTheme.colorScheme.surface
             )
@@ -127,7 +128,7 @@ fun FiltersScreen(
                     text = filtersForSearch.value.types.size.toString(),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorResource(com.example.core.R.color.accent)
+                    color = LocalAccentColor.current
                 )
             }
         }
@@ -143,12 +144,12 @@ fun FiltersScreen(
                     label = { Text(it.name) },
                     modifier = Modifier.padding(4.dp),
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = colorResource(com.example.core.R.color.accent),
+                        selectedContainerColor = LocalAccentColor.current,
                         selectedLabelColor = MaterialTheme.colorScheme.primary,
                         labelColor = MaterialTheme.colorScheme.secondary
                     ),
                     border = BorderStroke(
-                        width = 1.dp, colorResource(com.example.core.R.color.accent)
+                        width = 1.dp, LocalAccentColor.current
                     )
                 )
             }
@@ -169,7 +170,7 @@ fun FiltersScreen(
                     text = filtersForSearch.value.genres.size.toString(),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorResource(com.example.core.R.color.accent)
+                    color = LocalAccentColor.current
                 )
             }
         }
@@ -185,12 +186,12 @@ fun FiltersScreen(
                     label = { Text(it.name) },
                     modifier = Modifier.padding(4.dp),
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = colorResource(com.example.core.R.color.accent),
+                        selectedContainerColor = LocalAccentColor.current,
                         selectedLabelColor = MaterialTheme.colorScheme.primary,
                         labelColor = MaterialTheme.colorScheme.secondary
                     ),
                     border = BorderStroke(
-                        width = 1.dp, colorResource(com.example.core.R.color.accent)
+                        width = 1.dp, LocalAccentColor.current
                     )
                 )
             }
@@ -210,7 +211,7 @@ fun FiltersScreen(
                     text = filtersForSearch.value.countries.size.toString(),
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorResource(com.example.core.R.color.accent)
+                    color = LocalAccentColor.current
                 )
             }
         }
@@ -226,12 +227,12 @@ fun FiltersScreen(
                     label = { Text(it.name) },
                     modifier = Modifier.padding(4.dp),
                     colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = colorResource(com.example.core.R.color.accent),
+                        selectedContainerColor = LocalAccentColor.current,
                         selectedLabelColor = MaterialTheme.colorScheme.primary,
                         labelColor = MaterialTheme.colorScheme.secondary
                     ),
                     border = BorderStroke(
-                        width = 1.dp, colorResource(com.example.core.R.color.accent)
+                        width = 1.dp, LocalAccentColor.current
                     )
                 )
             }
@@ -268,9 +269,9 @@ fun FiltersScreen(
                 viewModel.setRatingFilter(ratingSliderPosition.value.toRange())
             },
             colors = SliderDefaults.colors(
-                thumbColor = colorResource(com.example.core.R.color.accent),
-                activeTrackColor = colorResource(com.example.core.R.color.accent),
-                inactiveTickColor = colorResource(com.example.core.R.color.accent),
+                thumbColor = LocalAccentColor.current,
+                activeTrackColor = LocalAccentColor.current,
+                inactiveTickColor = LocalAccentColor.current,
                 activeTickColor = colorResource(com.example.core.R.color.white),
                 inactiveTrackColor = MaterialTheme.colorScheme.surface
             )
@@ -286,7 +287,7 @@ fun FiltersScreen(
                 .fillMaxWidth(0.5f)
                 .padding(top = 40.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(com.example.core.R.color.accent),
+                containerColor = LocalAccentColor.current,
                 contentColor = colorResource(com.example.core.R.color.white)
             )
         ) {
@@ -300,7 +301,7 @@ fun FiltersScreen(
                 .align(Alignment.CenterHorizontally)
                 .fillMaxWidth(0.5f)
         ) {
-            Text("Назад", color = colorResource(com.example.core.R.color.accent))
+            Text("Назад", color = LocalAccentColor.current)
         }
     }
 }

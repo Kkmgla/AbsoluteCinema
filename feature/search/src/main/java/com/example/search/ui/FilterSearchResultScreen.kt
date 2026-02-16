@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.core.ui.CommonMovieItem
 import com.example.core.ui.CommonMovieListScreen
+import com.example.core.ui.LocalAccentColor
 import com.example.domain.model.Movie
 import com.example.search.R
 import com.example.search.viewmodel.SearchState
@@ -87,7 +88,7 @@ fun FilterSearchResultScreen(
                     }) {
                         Text(
                             "Обновить",
-                            color = colorResource(com.example.core.R.color.accent),
+                            color = LocalAccentColor.current,
                             fontWeight = FontWeight.Bold,
                             fontSize = 16.sp
                         )
@@ -116,7 +117,7 @@ fun FilterSearchResultScreen(
                     ) {
                         Text(
                             "Назад",
-                            color = colorResource(com.example.core.R.color.accent)
+                            color = LocalAccentColor.current
                         )
                     }
                 }

@@ -1,6 +1,7 @@
 package com.example.profile.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,19 +17,26 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.AccountCircle
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.auth.viewmodel.AuthViewModel
+import com.example.core.ui.LocalAccentColor
 
 @Composable
 fun ProfileScreen(
@@ -38,7 +46,8 @@ fun ProfileScreen(
     viewmodel: AuthViewModel
 ) {
     val user = viewmodel.getUser()
-
+    var showLogoutDialog by remember { mutableStateOf(false) }
+    val accentColor = LocalAccentColor.current
 
     Column(
         modifier = Modifier
@@ -54,6 +63,11 @@ fun ProfileScreen(
                     color = MaterialTheme.colorScheme.surface,
                     shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
                 )
+                .border(
+                    1.dp,
+                    accentColor,
+                    RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp)
+                )
         ) {
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -65,7 +79,7 @@ fun ProfileScreen(
                     modifier = Modifier
                         .padding(top = 40.dp)
                         .background(
-                            color = colorResource(com.example.core.R.color.accent), shape = CircleShape
+                            color = accentColor, shape = CircleShape
                         )
                         .size(100.dp)
                 )
@@ -97,6 +111,11 @@ fun ProfileScreen(
                 .background(
                     color = MaterialTheme.colorScheme.surface,
                     shape = RoundedCornerShape(20.dp)
+                )
+                .border(
+                    1.dp,
+                    accentColor,
+                    RoundedCornerShape(20.dp)
                 )
         ) {
             Column(
@@ -172,11 +191,53 @@ fun ProfileScreen(
         }
         TextButton(
             onClick = {
-                viewmodel.logOut()
-                onLogOut.invoke()
+                showLogoutDialog = true
             }
         ) {
             Text(stringResource(com.example.core.R.string.logout), fontSize = 20.sp, color = MaterialTheme.colorScheme.primary)
         }
+    }
+
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            containerColor = MaterialTheme.colorScheme.surface,
+            text = {
+                Text(
+                    text = stringResource(com.example.core.R.string.action_confirmation),
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Center
+                )
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showLogoutDialog = false
+                        viewmodel.logOut()
+                        onLogOut.invoke()
+                    },
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        text = stringResource(com.example.core.R.string.confirm),
+                        color = accentColor,
+                        fontSize = 16.sp
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = { showLogoutDialog = false },
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+                ) {
+                    Text(
+                        text = stringResource(com.example.core.R.string.cancel),
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontSize = 16.sp
+                    )
+                }
+            }
+        )
     }
 }

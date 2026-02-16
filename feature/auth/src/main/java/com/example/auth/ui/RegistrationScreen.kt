@@ -49,6 +49,7 @@ import androidx.compose.ui.focus.focusRequester
 import com.example.auth.viewmodel.AuthState
 import com.example.auth.viewmodel.AuthViewModel
 import com.example.core.R
+import com.example.core.ui.LocalAccentColor
 
 @Composable
 fun RegistrationScreen(
@@ -145,8 +146,8 @@ fun RegistrationScreen(
                         }
                     },
                     colors = TextFieldDefaults.colors(
-                        unfocusedIndicatorColor = colorResource(R.color.accent),
-                        focusedIndicatorColor = colorResource(R.color.accent),
+                        unfocusedIndicatorColor = LocalAccentColor.current,
+                        focusedIndicatorColor = LocalAccentColor.current,
                         unfocusedContainerColor = MaterialTheme.colorScheme.background,
                         focusedContainerColor = MaterialTheme.colorScheme.background,
                         unfocusedTrailingIconColor = MaterialTheme.colorScheme.secondary,
@@ -190,8 +191,8 @@ fun RegistrationScreen(
                         }
                     },
                     colors = TextFieldDefaults.colors(
-                        unfocusedIndicatorColor = colorResource(R.color.accent),
-                        focusedIndicatorColor = colorResource(R.color.accent),
+                        unfocusedIndicatorColor = LocalAccentColor.current,
+                        focusedIndicatorColor = LocalAccentColor.current,
                         unfocusedContainerColor = MaterialTheme.colorScheme.background,
                         focusedContainerColor = MaterialTheme.colorScheme.background,
                         unfocusedTrailingIconColor = MaterialTheme.colorScheme.secondary,
@@ -236,8 +237,8 @@ fun RegistrationScreen(
                         }
                     },
                     colors = TextFieldDefaults.colors(
-                        unfocusedIndicatorColor = colorResource(R.color.accent),
-                        focusedIndicatorColor = colorResource(R.color.accent),
+                        unfocusedIndicatorColor = LocalAccentColor.current,
+                        focusedIndicatorColor = LocalAccentColor.current,
                         unfocusedContainerColor = MaterialTheme.colorScheme.background,
                         focusedContainerColor = MaterialTheme.colorScheme.background,
                         unfocusedTrailingIconColor = MaterialTheme.colorScheme.secondary,
@@ -265,9 +266,7 @@ fun RegistrationScreen(
                         color = MaterialTheme.colorScheme.primary
                     )
                     Text(text = stringResource(R.string.ToLogin),
-                        color = colorResource(
-                            R.color.accent
-                        ),
+                        color = LocalAccentColor.current,
                         modifier = Modifier
                             .padding(start = 4.dp)
                             .clickable {
@@ -284,8 +283,8 @@ fun RegistrationScreen(
                 .padding(bottom = 100.dp),
             enabled = canSubmit,
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(R.color.accent),
-                disabledContainerColor = colorResource(R.color.accent).copy(alpha = 0.5f)
+                containerColor = LocalAccentColor.current,
+                disabledContainerColor = LocalAccentColor.current.copy(alpha = 0.5f)
             ),
             onClick = { submitRegistration() }) {
             Text(

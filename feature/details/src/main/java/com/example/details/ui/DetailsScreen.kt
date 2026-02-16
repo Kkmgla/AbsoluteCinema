@@ -62,6 +62,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.core.R
+import com.example.core.ui.LocalAccentColor
 import com.example.core.ui.LoadImageWithPlaceholder
 import com.example.core.ui.MovieRatingWithWreath
 import com.example.core.ui.UserScore
@@ -107,7 +108,7 @@ private fun ActorItem(actor: Person, modifier: Modifier = Modifier) {
                 .height(90.dp)
                 .width(60.dp)
                 .clip(CARD_BORDER_SHAPE)
-                .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE),
+                .border(CARD_BORDER_WIDTH, LocalAccentColor.current, CARD_BORDER_SHAPE),
             contentScale = ContentScale.Crop
         )
         Column(
@@ -205,7 +206,7 @@ private fun MovieScoreDialog(
                     }) {
                         Text(
                             text = "Сохранить",
-                            color = colorResource(R.color.accent),
+                            color = LocalAccentColor.current,
                         )
                     }
                     TextButton(onClick = {
@@ -230,7 +231,7 @@ private fun ReviewItem(review: Review, onClick: () -> Unit) {
             .width(320.dp)
             .padding(end = 8.dp)
             .clip(CARD_BORDER_SHAPE)
-            .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
+            .border(CARD_BORDER_WIDTH, LocalAccentColor.current, CARD_BORDER_SHAPE)
             .clickable(onClick = onClick)
             .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 6.dp)
     ) {
@@ -301,7 +302,7 @@ private fun ReviewDialog(review: Review, onDismiss: () -> Unit) {
                 ) {
                     Text(
                         text = "Закрыть",
-                        color = colorResource(R.color.accent)
+                        color = LocalAccentColor.current
                     )
                 }
             }
@@ -359,7 +360,7 @@ private fun DescriptionDialog(movie: Movie, onDismiss: () -> Unit) {
                 ) {
                     Text(
                         text = "Закрыть",
-                        color = colorResource(R.color.accent)
+                        color = LocalAccentColor.current
                     )
                 }
             }
@@ -411,7 +412,7 @@ private fun FullscreenImageDialog(imageUrl: String, onDismiss: () -> Unit) {
                     ) {
                         Text(
                             text = "Закрыть",
-                            color = colorResource(R.color.accent)
+                            color = LocalAccentColor.current
                         )
                     }
                 }
@@ -505,14 +506,14 @@ fun DetailsScreen(
                         .width(240.dp)
                         .align(Alignment.BottomCenter)
                         .clip(CARD_BORDER_SHAPE)
-                        .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE),
+                        .border(CARD_BORDER_WIDTH, LocalAccentColor.current, CARD_BORDER_SHAPE),
                     contentScale = ContentScale.Crop
                 )
                 Text(
                     text = "Назад",
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorResource(R.color.accent),
+                    color = LocalAccentColor.current,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(top = 16.dp, end = 16.dp)
@@ -588,7 +589,7 @@ fun DetailsScreen(
                             imageVector = Icons.Filled.PlayArrow,
                             contentDescription = "watching",
                             modifier = Modifier.size(ACTION_ICON_SIZE),
-                            tint = if (movie.isWatching) colorResource(R.color.accent)
+                            tint = if (movie.isWatching) LocalAccentColor.current
                             else MaterialTheme.colorScheme.primary
                         )
                     }
@@ -616,7 +617,7 @@ fun DetailsScreen(
                             else painterResource(R.drawable.bookmark),
                             contentDescription = "willwatch",
                             modifier = Modifier.size(ACTION_ICON_SIZE),
-                            tint = if (movie.isWillWatch) colorResource(R.color.accent)
+                            tint = if (movie.isWillWatch) LocalAccentColor.current
                             else MaterialTheme.colorScheme.primary
                         )
                     }
@@ -643,7 +644,7 @@ fun DetailsScreen(
                             imageVector = Icons.Filled.Check,
                             contentDescription = "watched",
                             modifier = Modifier.size(ACTION_ICON_SIZE),
-                            tint = if (movie.isWatched) colorResource(R.color.accent)
+                            tint = if (movie.isWatched) LocalAccentColor.current
                             else MaterialTheme.colorScheme.primary
                         )
                     }
@@ -670,7 +671,7 @@ fun DetailsScreen(
                             imageVector = Icons.Filled.Close,
                             contentDescription = "dropped",
                             modifier = Modifier.size(ACTION_ICON_SIZE),
-                            tint = if (movie.isDropped) colorResource(R.color.accent)
+                            tint = if (movie.isDropped) LocalAccentColor.current
                             else MaterialTheme.colorScheme.primary
                         )
                     }
@@ -698,7 +699,7 @@ fun DetailsScreen(
                             else Icons.Filled.FavoriteBorder,
                             contentDescription = "favourite",
                             modifier = Modifier.size(ACTION_ICON_SIZE),
-                            tint = if (movie.isFavorite) colorResource(R.color.accent)
+                            tint = if (movie.isFavorite) LocalAccentColor.current
                             else MaterialTheme.colorScheme.primary
                         )
                     }
@@ -776,7 +777,7 @@ fun DetailsScreen(
                 .fillMaxWidth()
                 .padding(top = 20.dp)
                 .clip(CARD_BORDER_SHAPE)
-                .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
+                .border(CARD_BORDER_WIDTH, LocalAccentColor.current, CARD_BORDER_SHAPE)
                 .padding(12.dp)
         ) {
             if (movie.shortDescription != null || movie.description != null) {
@@ -788,7 +789,7 @@ fun DetailsScreen(
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(text = "Все детали фильма",
-                    color = colorResource(R.color.accent),
+                    color = LocalAccentColor.current,
                     fontSize = 16.sp,
                     modifier = Modifier.clickable {
                         showDescriptionDialog.value = true
@@ -833,7 +834,7 @@ fun DetailsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(CARD_BORDER_SHAPE)
-                        .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
+                        .border(CARD_BORDER_WIDTH, LocalAccentColor.current, CARD_BORDER_SHAPE)
                         .padding(8.dp)
                 ) {
                     Text(
@@ -865,7 +866,7 @@ fun DetailsScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(CARD_BORDER_SHAPE)
-                    .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
+                    .border(CARD_BORDER_WIDTH, LocalAccentColor.current, CARD_BORDER_SHAPE)
                     .padding(8.dp)
             ) {
                 if (movie.facts.isNotEmpty()) {
@@ -928,7 +929,7 @@ fun DetailsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(CARD_BORDER_SHAPE)
-                        .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
+                        .border(CARD_BORDER_WIDTH, LocalAccentColor.current, CARD_BORDER_SHAPE)
                         .padding(8.dp)
                 ) {
                     Text(
@@ -965,7 +966,7 @@ fun DetailsScreen(
                                 .height(140.dp)
                                 .padding(end = 8.dp)
                                 .clip(CARD_BORDER_SHAPE)
-                                .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
+                                .border(CARD_BORDER_WIDTH, LocalAccentColor.current, CARD_BORDER_SHAPE)
                                 .clickable {
                                     selectedImageUrl.value = image.url ?: image.previewUrl
                                 },
@@ -978,7 +979,7 @@ fun DetailsScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(CARD_BORDER_SHAPE)
-                        .border(CARD_BORDER_WIDTH, colorResource(R.color.accent), CARD_BORDER_SHAPE)
+                        .border(CARD_BORDER_WIDTH, LocalAccentColor.current, CARD_BORDER_SHAPE)
                         .padding(8.dp)
                 ) {
                     Text(

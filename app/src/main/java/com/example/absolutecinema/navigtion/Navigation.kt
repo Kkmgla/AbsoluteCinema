@@ -79,6 +79,8 @@ fun AppNavigation(
     searchViewModel: SearchViewModel,
     authViewModel: AuthViewModel,
     onThemeChanged: (Boolean) -> Unit,
+    currentAccentHex: String,
+    onAccentColorChanged: (String) -> Unit,
     context: Context,
 ) {
     var botBarState by rememberSaveable { mutableStateOf(false) }
@@ -334,8 +336,10 @@ fun AppNavigation(
                     paddingValues = innerPadding,
                     onThemeChanged = { isDark ->
                         onThemeChanged(isDark)
-
-                    }
+                    },
+                    onBackClicked = { navController.popBackStack() },
+                    currentAccentHex = currentAccentHex,
+                    onAccentColorChanged = onAccentColorChanged
                 )
             }
             composable<ScreenMovie> {

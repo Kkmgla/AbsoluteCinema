@@ -17,6 +17,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.core.R
+import com.example.core.ui.LocalAccentColor
 
 enum class BotBarState {
     Home, Search, Users, Profile
@@ -31,6 +32,7 @@ fun BotBar(
     onProfile: () -> Unit = {},
     selectedTab: BotBarState = BotBarState.Home,
 ) {
+    val accentColor = LocalAccentColor.current
     fun isSelected(state: BotBarState): Boolean = selectedTab == state
     BottomAppBar(
         containerColor = MaterialTheme.colorScheme.background,
@@ -43,28 +45,28 @@ fun BotBar(
                 Icon(
                     imageVector = Icons.Default.Home,
                     contentDescription = "home",
-                    tint = if (isSelected(BotBarState.Home)) colorResource(R.color.accent) else MaterialTheme.colorScheme.secondary
+                    tint = if (isSelected(BotBarState.Home)) accentColor else MaterialTheme.colorScheme.secondary
                 )
             }
             IconButton(onClick = { onSearch.invoke() }) {
                 Icon(
                     imageVector = Icons.Default.Search,
                     contentDescription = "search",
-                    tint = if (isSelected(BotBarState.Search)) colorResource(R.color.accent) else MaterialTheme.colorScheme.secondary
+                    tint = if (isSelected(BotBarState.Search)) accentColor else MaterialTheme.colorScheme.secondary
                 )
             }
             IconButton(onClick = { onUsers.invoke() }) {
                 Icon(
                     painter = painterResource(R.drawable.bookmark),
                     contentDescription = "favorite",
-                    tint = if (isSelected(BotBarState.Users)) colorResource(R.color.accent) else MaterialTheme.colorScheme.secondary
+                    tint = if (isSelected(BotBarState.Users)) accentColor else MaterialTheme.colorScheme.secondary
                 )
             }
             IconButton(onClick = { onProfile.invoke() }) {
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "user",
-                    tint = if (isSelected(BotBarState.Profile)) colorResource(R.color.accent) else MaterialTheme.colorScheme.secondary
+                    tint = if (isSelected(BotBarState.Profile)) accentColor else MaterialTheme.colorScheme.secondary
                 )
             }
         }

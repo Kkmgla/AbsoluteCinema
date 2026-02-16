@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.core.ui.ApiRatingBadge
+import com.example.core.ui.LocalAccentColor
 import com.example.core.ui.LoadImageWithPlaceholder
 import com.example.core.ui.UserRatingBadge
 import com.example.core.util.getName
@@ -113,6 +114,7 @@ private fun HorizontalRowWTitleSmall(
     onAllClicked: () -> Unit,
     onMovieClicked: (Movie) -> Unit,
 ) {
+    val accentColor = LocalAccentColor.current
     Column(
         modifier = Modifier
             .padding(top = 16.dp, start = 16.dp, end = 16.dp)
@@ -131,7 +133,7 @@ private fun HorizontalRowWTitleSmall(
                     stringResource(com.example.core.R.string.All),
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorResource(com.example.core.R.color.accent),
+                    color = accentColor,
                     modifier = Modifier.clickable {
                         onAllClicked.invoke()
                     })

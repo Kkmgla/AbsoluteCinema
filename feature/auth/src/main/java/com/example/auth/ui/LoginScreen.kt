@@ -48,6 +48,7 @@ import androidx.compose.ui.focus.focusRequester
 import com.example.auth.viewmodel.AuthState
 import com.example.auth.viewmodel.AuthViewModel
 import com.example.core.R
+import com.example.core.ui.LocalAccentColor
 
 
 @Composable
@@ -141,8 +142,8 @@ fun LoginScreen(
                         }
                     },
                     colors = TextFieldDefaults.colors(
-                        unfocusedIndicatorColor = colorResource(R.color.accent),
-                        focusedIndicatorColor = colorResource(R.color.accent),
+                        unfocusedIndicatorColor = LocalAccentColor.current,
+                        focusedIndicatorColor = LocalAccentColor.current,
                         unfocusedContainerColor = MaterialTheme.colorScheme.background,
                         focusedContainerColor = MaterialTheme.colorScheme.background,
                         unfocusedTrailingIconColor = MaterialTheme.colorScheme.secondary,
@@ -190,8 +191,8 @@ fun LoginScreen(
                         }
                     },
                     colors = TextFieldDefaults.colors(
-                        unfocusedIndicatorColor = colorResource(R.color.accent),
-                        focusedIndicatorColor = colorResource(R.color.accent),
+                        unfocusedIndicatorColor = LocalAccentColor.current,
+                        focusedIndicatorColor = LocalAccentColor.current,
                         unfocusedContainerColor = MaterialTheme.colorScheme.background,
                         focusedContainerColor = MaterialTheme.colorScheme.background,
                         unfocusedTrailingIconColor = MaterialTheme.colorScheme.secondary,
@@ -212,7 +213,7 @@ fun LoginScreen(
                     )
                     Text(
                         text = stringResource(R.string.ToRegistration),
-                        color = colorResource(R.color.accent),
+                        color = LocalAccentColor.current,
                         modifier = Modifier
                             .padding(start = 4.dp)
                             .clickable {
@@ -225,7 +226,7 @@ fun LoginScreen(
                 val forgotPasswordEnterEmailText = stringResource(R.string.forgot_password_enter_email)
                 Text(
                     text = forgotPasswordText,
-                    color = colorResource(R.color.accent),
+                    color = LocalAccentColor.current,
                     modifier = Modifier.clickable {
                         if (email.value.contains("@")) {
                             viewModel.sendPasswordResetEmail(
@@ -252,8 +253,8 @@ fun LoginScreen(
                 .padding(bottom = 100.dp),
             enabled = canSubmit,
             colors = ButtonDefaults.buttonColors(
-                containerColor = colorResource(R.color.accent),
-                disabledContainerColor = colorResource(R.color.accent).copy(alpha = 0.5f)
+                containerColor = LocalAccentColor.current,
+                disabledContainerColor = LocalAccentColor.current.copy(alpha = 0.5f)
             ),
             onClick = {
                 viewModel.signIn(

@@ -8,8 +8,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import com.example.core.ui.LocalAccentColor
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.core.R
@@ -17,6 +17,7 @@ import com.example.core.R
 @Preview(showSystemUi = true)
 @Composable
 fun BeginScreen(paddingValues: PaddingValues = PaddingValues()) {
+    val accentColor = LocalAccentColor.current
     Box(
         modifier = Modifier.fillMaxSize().padding(paddingValues)
     ) {
@@ -26,7 +27,7 @@ fun BeginScreen(paddingValues: PaddingValues = PaddingValues()) {
             modifier = Modifier.align(
                 Alignment.Center
             ).fillMaxSize(0.5f),
-            tint = colorResource(R.color.accent)
+            tint = accentColor
         )
     }
 }

@@ -24,8 +24,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import com.example.core.ui.LocalAccentColor
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -43,6 +43,7 @@ fun CommonMovieListScreen(
     onMovieClicked: (Movie) -> Unit = {},
 ) {
     var isGridMode by rememberSaveable { mutableStateOf(false) }
+    val accentColor = LocalAccentColor.current
 
     Column(
         modifier = Modifier
@@ -75,7 +76,7 @@ fun CommonMovieListScreen(
                             id = if (isGridMode) R.drawable.ic_list else R.drawable.ic_grid
                         ),
                         contentDescription = if (isGridMode) "Список" else "Сетка",
-                        tint = colorResource(R.color.accent),
+                        tint = accentColor,
                         modifier = Modifier
                             .size(24.dp)
                             .clickable { isGridMode = !isGridMode }
@@ -84,7 +85,7 @@ fun CommonMovieListScreen(
                         text = "Назад",
                         fontSize = 18.sp,
                         fontWeight = FontWeight.Bold,
-                        color = colorResource(R.color.accent),
+                        color = accentColor,
                         modifier = Modifier.clickable {
                             onBackClicked.invoke()
                         }
