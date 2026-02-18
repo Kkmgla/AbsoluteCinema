@@ -3,10 +3,12 @@ package com.example.search.viewmodel
 import android.content.SharedPreferences
 import android.util.Log
 import android.util.Range
+import androidx.core.util.toRange
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.domain.model.Filter
 import com.example.domain.repository.MovieRepository
+import java.time.LocalDate
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -193,5 +195,14 @@ class SearchViewModel(
         }
     }
 
+    fun resetFilters() {
+        _filtersForSearch.value = SearchFilters(
+            types = emptyList(),
+            genres = emptyList(),
+            countries = emptyList(),
+            years = (1900F..LocalDate.now().year.toFloat()).toRange(),
+            rating = (1F..10F).toRange()
+        )
+    }
 
 }

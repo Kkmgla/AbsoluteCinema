@@ -75,12 +75,13 @@ fun SearchScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(paddingValues)
             .background(MaterialTheme.colorScheme.background)
     ) {
         SearchBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(paddingValues),
+                .padding(horizontal = 16.dp),
             query = query.value,
             onQueryChange = { query.value = it },
             placeholder = {

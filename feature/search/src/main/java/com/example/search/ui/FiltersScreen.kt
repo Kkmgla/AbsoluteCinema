@@ -1,22 +1,33 @@
 package com.example.search.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.SliderDefaults
@@ -24,17 +35,114 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.util.toRange
+import com.example.core.R
 import com.example.core.ui.LocalAccentColor
+import com.example.domain.model.Filter
 import com.example.search.viewmodel.SearchViewModel
+
+@Composable
+fun ExpandableFilterDropdown(
+    title: String,
+    items: List<Filter>,
+    selectedItems: List<Filter>,
+    isExpanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    onItemClick: (Filter) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val scrollState = rememberScrollState()
+    
+    val rotationAngle by animateFloatAsState(
+        targetValue = if (isExpanded) 180f else 0f,
+        animationSpec = tween(300),
+        label = "chevron_rotation"
+    )
+    
+    Column(modifier = modifier) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onExpandedChange(!isExpanded) },
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = title,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp, end = 8.dp)
+                )
+                if (selectedItems.isNotEmpty()) {
+                    Text(
+                        text = selectedItems.size.toString(),
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = LocalAccentColor.current,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
+            }
+            Icon(
+                imageVector = Icons.Filled.KeyboardArrowDown,
+                contentDescription = if (isExpanded) "Свернуть" else "Развернуть",
+                modifier = Modifier
+                    .size(28.dp)
+                    .rotate(rotationAngle),
+                tint = LocalAccentColor.current
+            )
+        }
+        
+        AnimatedVisibility(
+            visible = isExpanded,
+            enter = expandVertically(animationSpec = tween(300)),
+            exit = shrinkVertically(animationSpec = tween(300))
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 350.dp)
+                    .verticalScroll(scrollState)
+            ) {
+                items.forEach { item ->
+                    val selected = selectedItems.any { it.name == item.name }
+                    FilterChip(
+                        selected = selected,
+                        onClick = { onItemClick(item) },
+                        label = { Text(item.name) },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 1.dp, horizontal = 4.dp),
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = LocalAccentColor.current,
+                            selectedLabelColor = MaterialTheme.colorScheme.primary,
+                            labelColor = MaterialTheme.colorScheme.secondary
+                        ),
+                        border = BorderStroke(
+                            width = 1.dp, LocalAccentColor.current
+                        )
+                    )
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun FiltersScreen(
@@ -53,6 +161,9 @@ fun FiltersScreen(
         mutableStateOf(filters.value.years.lower..filters.value.years.upper)
     }
 
+    var typesExpanded by remember { mutableStateOf(false) }
+    var genresExpanded by remember { mutableStateOf(false) }
+    var countriesExpanded by remember { mutableStateOf(false) }
 
     val scrollState = rememberScrollState()
 
@@ -61,16 +172,50 @@ fun FiltersScreen(
             .fillMaxSize()
             .background(color = MaterialTheme.colorScheme.background)
             .padding(paddingValues)
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 16.dp)
             .verticalScroll(state = scrollState),
     ) {
-        Text(
-            "Фильтры",
-            fontSize = 36.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp, bottom = 8.dp),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                "Фильтры",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                maxLines = 1
+            )
+            Row(
+                verticalAlignment = Alignment.Bottom,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_reset),
+                    contentDescription = "Сброс фильтров",
+                    tint = LocalAccentColor.current,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .clickable {
+                            viewModel.resetFilters()
+                            yearSliderPosition.value = filters.value.years.lower..filters.value.years.upper
+                            ratingSliderPosition.value = filters.value.rating.lower..filters.value.rating.upper
+                        }
+                )
+                Text(
+                    text = "Назад",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = LocalAccentColor.current,
+                    modifier = Modifier.clickable {
+                        onBackClicked.invoke()
+                    }
+                )
+            }
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -79,7 +224,7 @@ fun FiltersScreen(
         ) {
             Text(
                 "Год",
-                fontSize = 32.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
@@ -87,14 +232,14 @@ fun FiltersScreen(
 
             Text(
                 "от ${yearSliderPosition.value.start.toInt()} до ${yearSliderPosition.value.endInclusive.toInt()}",
-                fontSize = 24.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
             )
         }
         RangeSlider(
-            modifier = Modifier.padding(horizontal = 8.dp),
+            modifier = Modifier.padding(horizontal = 16.dp),
             value = yearSliderPosition.value,
             onValueChange = { range ->
                 yearSliderPosition.value = range
@@ -113,130 +258,49 @@ fun FiltersScreen(
             )
         )
 
-        Row(
-            verticalAlignment = Alignment.Bottom
-        ) {
-            Text(
-                text = "Тип",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp, end = 8.dp)
-            )
-            if (filtersForSearch.value.types.isNotEmpty()) {
-                Text(
-                    text = filtersForSearch.value.types.size.toString(),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = LocalAccentColor.current
-                )
+        ExpandableFilterDropdown(
+            title = "Тип",
+            items = filters.value.types,
+            selectedItems = filtersForSearch.value.types,
+            isExpanded = typesExpanded,
+            onExpandedChange = { typesExpanded = it },
+            onItemClick = { filter ->
+                if (filtersForSearch.value.types.contains(filter)) {
+                    viewModel.removeTypeFilter(filter)
+                } else {
+                    viewModel.addTypeFilter(filter)
+                }
             }
-        }
-        LazyRow {
-            items(filters.value.types) {
-                val selected = filtersForSearch.value.types.contains(it)
-                FilterChip(
-                    selected = selected,
-                    onClick = {
-                        if (selected) viewModel.removeTypeFilter(it)
-                        else viewModel.addTypeFilter(it)
-                    },
-                    label = { Text(it.name) },
-                    modifier = Modifier.padding(4.dp),
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = LocalAccentColor.current,
-                        selectedLabelColor = MaterialTheme.colorScheme.primary,
-                        labelColor = MaterialTheme.colorScheme.secondary
-                    ),
-                    border = BorderStroke(
-                        width = 1.dp, LocalAccentColor.current
-                    )
-                )
-            }
-        }
+        )
 
-        Row(
-            verticalAlignment = Alignment.Bottom
-        ) {
-            Text(
-                text = "Жанры",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp, end = 8.dp)
-            )
-            if (filtersForSearch.value.genres.isNotEmpty()) {
-                Text(
-                    text = filtersForSearch.value.genres.size.toString(),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = LocalAccentColor.current
-                )
+        ExpandableFilterDropdown(
+            title = "Жанры",
+            items = filters.value.genres,
+            selectedItems = filtersForSearch.value.genres,
+            isExpanded = genresExpanded,
+            onExpandedChange = { genresExpanded = it },
+            onItemClick = { filter ->
+                if (filtersForSearch.value.genres.contains(filter)) {
+                    viewModel.removeGenreFilter(filter)
+                } else {
+                    viewModel.addGenreFilter(filter)
+                }
             }
-        }
-        LazyRow {
-            items(filters.value.genres) {
-                val selected = filtersForSearch.value.genres.contains(it)
-                FilterChip(
-                    selected = selected,
-                    onClick = {
-                        if (selected) viewModel.removeGenreFilter(it)
-                        else viewModel.addGenreFilter(it)
-                    },
-                    label = { Text(it.name) },
-                    modifier = Modifier.padding(4.dp),
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = LocalAccentColor.current,
-                        selectedLabelColor = MaterialTheme.colorScheme.primary,
-                        labelColor = MaterialTheme.colorScheme.secondary
-                    ),
-                    border = BorderStroke(
-                        width = 1.dp, LocalAccentColor.current
-                    )
-                )
+        )
+        ExpandableFilterDropdown(
+            title = "Страны",
+            items = filters.value.countries,
+            selectedItems = filtersForSearch.value.countries,
+            isExpanded = countriesExpanded,
+            onExpandedChange = { countriesExpanded = it },
+            onItemClick = { filter ->
+                if (filtersForSearch.value.countries.contains(filter)) {
+                    viewModel.removeCountryFilter(filter)
+                } else {
+                    viewModel.addCountryFilter(filter)
+                }
             }
-        }
-        Row(
-            verticalAlignment = Alignment.Bottom
-        ) {
-            Text(
-                text = "Страны",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp, end = 8.dp)
-            )
-            if (filtersForSearch.value.countries.isNotEmpty()) {
-                Text(
-                    text = filtersForSearch.value.countries.size.toString(),
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = LocalAccentColor.current
-                )
-            }
-        }
-        LazyRow {
-            items(filters.value.countries) {
-                val selected = filtersForSearch.value.countries.contains(it)
-                FilterChip(
-                    selected = selected,
-                    onClick = {
-                        if (selected) viewModel.removeCountryFilter(it)
-                        else viewModel.addCountryFilter(it)
-                    },
-                    label = { Text(it.name) },
-                    modifier = Modifier.padding(4.dp),
-                    colors = FilterChipDefaults.filterChipColors(
-                        selectedContainerColor = LocalAccentColor.current,
-                        selectedLabelColor = MaterialTheme.colorScheme.primary,
-                        labelColor = MaterialTheme.colorScheme.secondary
-                    ),
-                    border = BorderStroke(
-                        width = 1.dp, LocalAccentColor.current
-                    )
-                )
-            }
-        }
+        )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -245,7 +309,7 @@ fun FiltersScreen(
         ) {
             Text(
                 "Рейтинг",
-                fontSize = 32.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
@@ -253,14 +317,14 @@ fun FiltersScreen(
 
             Text(
                 "от ${ratingSliderPosition.value.start.toInt()} до ${ratingSliderPosition.value.endInclusive.toInt()}",
-                fontSize = 24.sp,
+                fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
             )
         }
         RangeSlider(
-            modifier = Modifier.padding(horizontal = 8.dp),
+            modifier = Modifier.padding(horizontal = 16.dp),
             value = ratingSliderPosition.value,
             steps = 8,
             onValueChange = { range -> ratingSliderPosition.value = range },
@@ -291,17 +355,11 @@ fun FiltersScreen(
                 contentColor = colorResource(com.example.core.R.color.white)
             )
         ) {
-            Text("Искать")
-        }
-
-        TextButton(
-            onClick = {
-                onBackClicked.invoke()
-            }, modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .fillMaxWidth(0.5f)
-        ) {
-            Text("Назад", color = LocalAccentColor.current)
+            Text(
+                "Искать",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
