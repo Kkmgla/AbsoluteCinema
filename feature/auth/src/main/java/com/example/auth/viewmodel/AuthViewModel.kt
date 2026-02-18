@@ -38,13 +38,44 @@ class AuthViewModel(
         }
     }
 
+    private fun friendlyErrorMessage(e: Exception): String {
+        val msg = (e.message ?: "").trim()
+        return when {
+            msg.contains("network error", ignoreCase = true) || 
+            msg.contains("timeout", ignoreCase = true) || 
+            msg.contains("interrupted connection", ignoreCase = true) || 
+            msg.contains("unreachable", ignoreCase = true) ||
+            msg.contains("Unable to resolve host", ignoreCase = true) ||
+            msg.contains("failed to connect", ignoreCase = true) -> 
+                "Проблемы с соединением. Проверьте интернет и попробуйте снова."
+            msg.contains("password is invalid", ignoreCase = true) || 
+            msg.contains("wrong password", ignoreCase = true) -> 
+                "Неверный пароль. Проверьте правильность ввода."
+            msg.contains("no user record", ignoreCase = true) || 
+            msg.contains("user not found", ignoreCase = true) -> 
+                "Пользователь с таким email не найден."
+            msg.contains("email address is already in use", ignoreCase = true) -> 
+                "Email уже используется. Войдите в аккаунт или используйте другой email."
+            msg.contains("email address is badly formatted", ignoreCase = true) || 
+            msg.contains("invalid email", ignoreCase = true) -> 
+                "Некорректный email адрес."
+            msg.contains("weak password", ignoreCase = true) || 
+            msg.contains("password should be at least", ignoreCase = true) -> 
+                "Пароль слишком слабый. Используйте минимум 6 символов."
+            msg.contains("too many requests", ignoreCase = true) -> 
+                "Слишком много попыток. Попробуйте позже."
+            msg.isNotBlank() -> msg
+            else -> "Произошла ошибка. Попробуйте снова."
+        }
+    }
+
     fun signIn(email: String, password: String) = viewModelScope.launch {
         _authState.value = AuthState.Loading
         try {
             val result = signInWithEmail(email, password)
             _authState.value = AuthState.SignInSuccess(result.user!!)
         } catch (e: Exception) {
-            _authState.value = AuthState.SignInFail(e.message ?: "Unknown error")
+            _authState.value = AuthState.SignInFail(friendlyErrorMessage(e))
         }
     }
 
@@ -65,7 +96,7 @@ class AuthViewModel(
     fun createAccount(email: String, password: String, confirmPassword: String) =
         viewModelScope.launch {
             if (password != confirmPassword) {
-                _authState.value = AuthState.CreateAccountFail("Passwords don't match")
+                _authState.value = AuthState.CreateAccountFail("Пароли не совпадают")
                 return@launch
             }
 
@@ -74,7 +105,7 @@ class AuthViewModel(
                 val result = register(email, password)
                 _authState.value = AuthState.SignInSuccess(result.user!!)
             } catch (e: Exception) {
-                _authState.value = AuthState.CreateAccountFail(e.message ?: "Unknown error")
+                _authState.value = AuthState.CreateAccountFail(friendlyErrorMessage(e))
             }
         }
 
@@ -94,6 +125,6 @@ class AuthViewModel(
         }
         auth.sendPasswordResetEmail(email)
             .addOnSuccessListener { onSuccess() }
-            .addOnFailureListener { e -> onError(e.message ?: "Ошибка отправки") }
+            .addOnFailureListener { e -> onError(friendlyErrorMessage(e)) }
     }
 }

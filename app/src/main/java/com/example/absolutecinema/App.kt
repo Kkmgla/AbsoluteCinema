@@ -17,7 +17,14 @@ import org.koin.core.logger.Level
 class App: Application() {
     override fun onCreate() {
         super.onCreate()
-        FirebaseApp.initializeApp(this)
+        // Initialize Firebase only if not already initialized
+        try {
+            if (FirebaseApp.getApps(this).isEmpty()) {
+                FirebaseApp.initializeApp(this)
+            }
+        } catch (e: Exception) {
+            // Firebase might already be initialized, ignore
+        }
         startKoin {
             androidLogger(Level.INFO)
             androidContext(this@App)

@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -38,12 +39,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.core.R
 import com.example.core.ui.CommonMovieItem
 import com.example.core.ui.LocalAccentColor
 import com.example.domain.model.Movie
@@ -150,24 +154,22 @@ fun SearchScreen(
         ) {
             //История поиска
             if (isSearchBarFocused.value && query.value.isEmpty()){
-                Box {
-                    LazyColumn {
-                        items(searchHistory){
-                            TextButton(
-                                onClick = {query.value = it}
-                            ) {
-                                Text(text = it)
-                            }
+                LazyColumn {
+                    items(searchHistory){ historyItem ->
+                        TextButton(
+                            onClick = {query.value = historyItem}
+                        ) {
+                            Text(text = historyItem)
                         }
-                        if (searchHistory.isNotEmpty()) {
-                            item {
-                                TextButton(
-                                    onClick = {
-                                        viewModel.clearSearchHistory()
-                                    }
-                                ) {
-                                    Text("Очистить историю")
+                    }
+                    if (searchHistory.isNotEmpty()) {
+                        item {
+                            TextButton(
+                                onClick = {
+                                    viewModel.clearSearchHistory()
                                 }
+                            ) {
+                                Text("Очистить историю")
                             }
                         }
                     }
@@ -175,23 +177,8 @@ fun SearchScreen(
             }
             when(searchState) {
                 SearchState.Idle -> {
-                    Box(
-                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text(
-                                "Ищите фильмы и сериалы по названию или фильтрам",
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 16.sp,
-                                textAlign = TextAlign.Center
-                            )
-                        }
-                    }
+                    // Empty state - background logo and text are visible below
                 }
-
                 SearchState.Loading -> {
                     Box(
                         modifier = Modifier
@@ -264,6 +251,36 @@ fun SearchScreen(
                         }
                     }
                 }
+            }
+        }
+        
+        // Permanent background layer with logo and text - always visible
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.absolutecinema_icon),
+                    contentDescription = stringResource(R.string.cd_app_logo),
+                    modifier = Modifier
+                        .fillMaxSize(0.5f)
+                        .alpha(0.3f)
+                        .padding(bottom = 4.dp),
+                    tint = LocalAccentColor.current
+                )
+                Text(
+                    "Здесь вы можете осуществлять поиск фильмов по названию и фильтрам!",
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontSize = 20.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.padding(horizontal = 32.dp)
+                )
             }
         }
     }
