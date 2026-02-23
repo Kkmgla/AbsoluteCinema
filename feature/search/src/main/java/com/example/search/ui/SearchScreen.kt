@@ -60,7 +60,8 @@ fun SearchScreen(
     paddingValues: PaddingValues,
     viewModel: SearchViewModel,
     onMovieClicked: (Movie) -> Unit,
-    onFiltersMenuClicked: () -> Unit
+    onFiltersMenuClicked: () -> Unit,
+    onTitleSearchSubmit: (String) -> Unit = {},
 ) {
     val query = remember { mutableStateOf("") }
     val isSearchBarFocused = rememberSaveable { mutableStateOf(false) }
@@ -95,9 +96,13 @@ fun SearchScreen(
             },
             leadingIcon = {
                 IconButton(onClick = {
-                    viewModel.searchWithDebounce(
-                        query = query.value, launchedFromButton = true
-                    )
+                    if (query.value.trim().isNotBlank()) {
+                        onTitleSearchSubmit(query.value.trim())
+                    } else {
+                        viewModel.searchWithDebounce(
+                            query = query.value, launchedFromButton = true
+                        )
+                    }
                 }) {
                     Icon(
                     Icons.Default.Search,
@@ -135,9 +140,13 @@ fun SearchScreen(
                 }
             },
             onSearch = {
-                viewModel.searchWithDebounce(
-                    query = query.value, launchedFromButton = true
-                )
+                if (query.value.trim().isNotBlank()) {
+                    onTitleSearchSubmit(query.value.trim())
+                } else {
+                    viewModel.searchWithDebounce(
+                        query = query.value, launchedFromButton = true
+                    )
+                }
             },
             active = isSearchBarFocused.value,
             onActiveChange = {

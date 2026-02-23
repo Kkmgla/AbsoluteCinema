@@ -1,6 +1,7 @@
 package com.example.absolutecinema.navigtion
 
 import android.content.Context
+import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -12,8 +13,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.auth.ui.LoginScreen
 import com.example.auth.ui.RegistrationScreen
 import com.example.auth.viewmodel.AuthViewModel
@@ -62,6 +65,7 @@ import com.example.profile.viewmodel.StatisticsViewModel
 import com.example.search.ui.FilterSearchResultScreen
 import com.example.search.ui.FiltersScreen
 import com.example.search.ui.SearchScreen
+import com.example.search.ui.TitleSearchResultScreen
 import com.example.search.viewmodel.SearchViewModel
 import com.example.users.ui.AllDroppedScreen
 import com.example.users.ui.AllFavouritesScreen
@@ -232,7 +236,28 @@ fun AppNavigation(
                     onMovieClicked = { movie ->
                         handleMovieClick(movie)
                     },
-                    onFiltersMenuClicked = { navController.navigate(ScreenSearchFilters) }
+                    onFiltersMenuClicked = { navController.navigate(ScreenSearchFilters) },
+                    onTitleSearchSubmit = { query ->
+                        navController.navigate("search_title_result/${Uri.encode(query)}")
+                    },
+                )
+            }
+            composable(
+                route = "search_title_result/{query}",
+                arguments = listOf(
+                    navArgument("query") {
+                        type = NavType.StringType
+                        defaultValue = ""
+                    },
+                ),
+            ) { backStackEntry ->
+                val query = Uri.decode(backStackEntry.arguments?.getString("query") ?: "")
+                TitleSearchResultScreen(
+                    query = query,
+                    viewModel = searchViewModel,
+                    paddingValues = innerPadding,
+                    onBackClicked = { navController.popBackStack() },
+                    onMovieClicked = { movie -> handleMovieClick(movie) },
                 )
             }
             composable<ScreenSearchFilters> {

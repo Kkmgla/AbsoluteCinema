@@ -20,6 +20,9 @@ sealed class ScreenRoutes {
     object ScreenSearchFiltersResult
 
     @Serializable
+    data class ScreenSearchTitleResult(val query: String = "")
+
+    @Serializable
     object ScreenUsers
 
     @Serializable
