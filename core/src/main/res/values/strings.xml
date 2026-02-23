@@ -51,4 +51,103 @@
     <string name="cancel">Отмена</string>
     <string name="version_app">Версия 2.8</string>
     <string name="version_api">API версия 1.5</string>
+    <string name="statistics">Статистика</string>
+    <string name="not_enough_data_statistics">Недостаточно данных для расчёта статистики</string>
+    <string name="favorite_genres">Любимые жанры</string>
+    <string name="cd_show_percentages">Показать в процентах</string>
+    <string name="cd_show_scores">Показать баллы</string>
+    <string name="favorite_genres_info_dialog_title">Как считаются любимые жанры</string>
+    <string name="favorite_genres_info_intro">Любимые жанры определяются по просмотренным вами фильмам. Каждый фильм вносит вклад в те жанры, к которым он относится, с учётом рейтинга фильма. Так мы понимаем, какие жанры вам нравятся больше всего.</string>
+    <string name="favorite_genres_info_formula_label">Формула:</string>
+    <string name="favorite_genres_info_formula">GenreScore(g) = Σ (MovieRating × GenreIndicator) / N</string>
+    <string name="favorite_genres_info_where">Где:</string>
+    <string name="favorite_genres_info_movie_rating">MovieRating — официальный рейтинг фильма из нашего источника (например, Кинопоиск).</string>
+    <string name="favorite_genres_info_genre_indicator">GenreIndicator — 1, если фильм относится к жанру g, иначе 0.</string>
+    <string name="favorite_genres_info_n">N — общее количество просмотренных вами фильмов.</string>
+    <string name="favorite_genres_info_explanation_label">Объяснение простыми словами:</string>
+    <string name="favorite_genres_info_explanation">Для каждого жанра мы смотрим все просмотренные вами фильмы и считаем балл. Фильмы с более высоким рейтингом сильнее повышают балл этого жанра. Если вы посмотрели много фильмов одного жанра, балл этого жанра будет выше. Этот балл показывает ваше предпочтение по каждому жанру. Чем выше балл, тем больше жанр совпадает с вашим вкусом.</string>
+    <string name="favorite_genres_info_close">Закрыть</string>
+    <string name="cd_info_favorite_genres">Как считаются любимые жанры</string>
+    <string name="temporal_balance_title">Временной баланс</string>
+    <string name="temporal_balance_average_year">Средний год: %d</string>
+    <string name="temporal_balance_average_year_label">Средний год:</string>
+    <string name="temporal_balance_average_year_value">%d</string>
+    <string name="temporal_balance_modernity">Индекс современности: %.2f</string>
+    <string name="temporal_balance_modernity_label">Индекс современности:</string>
+    <string name="temporal_balance_modernity_value">%.2f</string>
+    <string name="temporal_balance_modernity_percent">%d%% современное</string>
+    <string name="temporal_balance_info_explanation">Показывает, предпочитаете ли вы классику или современное кино. 0 — в основном классика, 1 — в основном современное.</string>
+    <string name="temporal_balance_info_formula_label">Формула:</string>
+    <string name="temporal_balance_info_formula_avg">AverageYear = Σ Year_i / N</string>
+    <string name="temporal_balance_info_formula_modernity">ModernityIndex = (AverageYear - 1900) / (CurrentYear - 1900)</string>
+    <string name="temporal_balance_info_where">Где: Year_i — год выхода фильма i, N — количество просмотренных фильмов.</string>
+    <string name="temporal_balance_info_close">Закрыть</string>
+    <string name="cd_info_temporal_balance">Как считается временной баланс</string>
+    <string name="diversity_index_title">Оценка энтропии жанрового распределения</string>
+    <string name="diversity_index_score">Индекс: %.2f</string>
+    <string name="diversity_index_score_label">Индекс:</string>
+    <string name="diversity_index_score_value">%.2f</string>
+    <string name="diversity_index_info_dialog_title">Индекс разнообразия жанров</string>
+    <string name="diversity_index_info_explanation">Индекс разнообразия жанров показывает, насколько разнообразны ваши просмотренные фильмы по жанрам. Он отражает, сосредоточены ли ваши просмотры на нескольких любимых жанрах или вы смотрите фильмы разных жанров.</string>
+    <string name="diversity_index_info_formula">H = - Σ (p_i × ln(p_i))</string>
+    <string name="diversity_index_info_where">p_i — доля ваших просмотренных фильмов, относящихся к жанру i. Суммирование проводится по всем жанрам, которые вы смотрели.</string>
+    <string name="diversity_index_info_interpretation">Более высокое значение — значит, вы смотрите фильмы из разных жанров, ваш вкус разнообразен. Более низкое значение — значит, вы в основном смотрите фильмы из нескольких жанров.</string>
+    <string name="diversity_index_info_example">Пример: Если все просмотренные фильмы одного жанра, индекс равен 0. Если фильмы равномерно распределены по разным жанрам, индекс будет выше, показывая более широкий круг интересов.</string>
+    <string name="diversity_index_interpretation_low">Низкое разнообразие жанров</string>
+    <string name="diversity_index_interpretation_medium">Среднее разнообразие жанров</string>
+    <string name="diversity_index_interpretation_high">Высокое разнообразие жанров</string>
+    <string name="diversity_index_info_close">Закрыть</string>
+    <string name="cd_info_diversity_index">Как считается индекс разнообразия жанров</string>
+
+    <!-- Block 1: Average rating -->
+    <string name="average_rating_title">Средний рейтинг просмотренных фильмов</string>
+    <string name="average_rating_label">Средний рейтинг:</string>
+    <string name="average_rating_value">%.2f</string>
+    <string name="average_rating_info_dialog_title">Средний рейтинг</string>
+    <string name="average_rating_info_explanation">Средний рейтинг ваших просмотренных фильмов по данным Кинопоиска или IMDB. Показывает, фильмы какого уровня вы в среднем смотрите.</string>
+    <string name="average_rating_info_formula">MeanRating = Σ Rating_i / N</string>
+    <string name="average_rating_info_where">Где: Rating_i — рейтинг Кинопоиска или IMDB фильма i, N — количество просмотренных фильмов с рейтингом.</string>
+    <string name="average_rating_info_close">Закрыть</string>
+    <string name="cd_info_average_rating">Как считается средний рейтинг</string>
+
+    <!-- Block 3: Rating consistency -->
+    <string name="rating_consistency_title">Разброс рейтингов</string>
+    <string name="rating_consistency_label">Стандартное отклонение:</string>
+    <string name="rating_consistency_value">%.2f</string>
+    <string name="rating_consistency_info_dialog_title">Разброс рейтингов</string>
+    <string name="rating_consistency_info_explanation">Стандартное отклонение рейтингов ваших просмотренных фильмов. Низкое значение — вы смотрите фильмы со схожими рейтингами. Высокое — рейтинги просмотренных фильмов сильно различаются.</string>
+    <string name="rating_consistency_info_formula">σ² = Σ (r_i - mean)² / N, σ = √σ²</string>
+    <string name="rating_consistency_info_where">Где: r_i — рейтинг фильма i, mean — средний рейтинг, N — количество фильмов.</string>
+    <string name="rating_consistency_info_close">Закрыть</string>
+    <string name="cd_info_rating_consistency">Как считается разброс рейтингов</string>
+
+    <!-- Block 6: Rating bias -->
+    <string name="rating_bias_title">Согласие с рейтингом</string>
+    <string name="rating_bias_label">Среднее отклонение:</string>
+    <string name="rating_bias_value">%+.2f</string>
+    <string name="rating_bias_interpretation">Вы в среднем ставите на %1$.2f баллов %2$s рейтинга Кинопоиска.</string>
+    <string name="rating_bias_interpretation_higher">выше</string>
+    <string name="rating_bias_interpretation_lower">ниже</string>
+    <string name="rating_bias_info_dialog_title">Согласие с рейтингом</string>
+    <string name="rating_bias_info_explanation">Показывает, насколько ваши оценки совпадают с рейтингом Кинопоиска. Положительное значение — вы в среднем ставите выше, отрицательное — ниже. Ноль — полное совпадение.</string>
+    <string name="rating_bias_info_formula">Bias = Σ (UserRate_i - Kp_i) / N</string>
+    <string name="rating_bias_info_where">Где: UserRate_i — ваша оценка фильма i, Kp_i — рейтинг Кинопоиска, N — количество оценённых фильмов.</string>
+    <string name="rating_bias_info_close">Закрыть</string>
+    <string name="cd_info_rating_bias">Как считается согласие с рейтингом</string>
+
+    <!-- Completion rate (index of viewing completion) -->
+    <string name="completion_rate_title">Индекс завершённости просмотров</string>
+    <string name="completion_rate_percent_center">%d%%</string>
+    <string name="completion_rate_watched">Завершено: %d</string>
+    <string name="completion_rate_dropped">Брошено: %d</string>
+    <string name="completion_rate_interpretation_low">Часто бросает фильмы</string>
+    <string name="completion_rate_interpretation_medium">Умеренный уровень завершения</string>
+    <string name="completion_rate_interpretation_high">В основном досматривает</string>
+    <string name="completion_rate_interpretation_full">Почти всегда завершает</string>
+    <string name="completion_rate_info_dialog_title">Индекс завершённости просмотров</string>
+    <string name="completion_rate_info_explanation">Показывает, какую долю начатых фильмов вы досматриваете до конца. W — досмотрено, D — брошено. Формула: C = W / (W + D).</string>
+    <string name="completion_rate_info_formula">C = W / (W + D), C%% = C × 100</string>
+    <string name="completion_rate_info_where">Где: W — количество просмотренных до конца, D — количество брошенных, T = W + D — всего начато.</string>
+    <string name="completion_rate_info_close">Закрыть</string>
+    <string name="cd_info_completion_rate">Как считается индекс завершённости просмотров</string>
 </resources>

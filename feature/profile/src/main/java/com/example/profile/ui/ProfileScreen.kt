@@ -82,6 +82,7 @@ private fun saveAvatarFromUri(context: Context, uri: android.net.Uri): String? {
 fun ProfileScreen(
     paddingValues: PaddingValues = PaddingValues(),
     onSettingsClicked: () -> Unit = {},
+    onStatisticsClicked: () -> Unit = {},
     onLogOut: () -> Unit,
     viewmodel: AuthViewModel
 ) {
@@ -217,6 +218,28 @@ fun ProfileScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(stringResource(com.example.core.R.string.settings), fontSize = 20.sp, color = MaterialTheme.colorScheme.primary)
+                    Icon(
+                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
+
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    color = accentColor
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 16.dp)
+                        .clickable { onStatisticsClicked.invoke() },
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(stringResource(com.example.core.R.string.statistics), fontSize = 20.sp, color = MaterialTheme.colorScheme.primary)
                     Icon(
                         Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         contentDescription = null,

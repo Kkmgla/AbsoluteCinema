@@ -5,6 +5,7 @@ import com.example.absolutecinema.di.authModule
 import com.example.absolutecinema.di.dataModule
 import com.example.absolutecinema.di.featureDetailsModule
 import com.example.absolutecinema.di.featureFeedModule
+import com.example.absolutecinema.di.featureProfileModule
 import com.example.absolutecinema.di.featureUsersModule
 import com.example.absolutecinema.di.loggerModule
 import com.example.absolutecinema.di.searchModule
@@ -34,6 +35,7 @@ class App: Application() {
                     featureFeedModule,
                     featureUsersModule,
                     featureDetailsModule,
+                    featureProfileModule,
                     loggerModule,
                     searchModule,
                     authModule

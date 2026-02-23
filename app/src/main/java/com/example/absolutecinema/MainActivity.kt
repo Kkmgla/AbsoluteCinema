@@ -20,6 +20,7 @@ import com.example.absolutecinema.ui.theme.AbsoluteCinemaTheme
 import com.example.details.viewmodel.DetailsViewModel
 import com.example.feed.viewmodel.FeedViewModel
 import com.example.search.viewmodel.SearchViewModel
+import com.example.profile.viewmodel.StatisticsViewModel
 import com.example.users.viewmodel.UsersViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -30,6 +31,7 @@ class MainActivity : ComponentActivity() {
     private val usersViewModel by viewModel<UsersViewModel>()
     private val searchViewModel by viewModel<SearchViewModel>()
     private val authViewModel by viewModel<AuthViewModel>()
+    private val statisticsViewModel by viewModel<StatisticsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +78,7 @@ class MainActivity : ComponentActivity() {
                         usersViewModel = usersViewModel,
                         searchViewModel = searchViewModel,
                         authViewModel = authViewModel,
+                        statisticsViewModel = statisticsViewModel,
                         onThemeChanged = { isDarkTheme ->
                             changeTheme(isDark = isDarkTheme)
                         },

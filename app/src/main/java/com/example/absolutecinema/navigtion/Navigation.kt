@@ -33,6 +33,7 @@ import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenSearch
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenSearchFilters
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenSearchFiltersResult
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenSettings
+import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenStatistics
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllDropped
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllFavourites
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllWatched
@@ -56,6 +57,8 @@ import com.example.feed.ui.FeedScreen
 import com.example.feed.viewmodel.FeedViewModel
 import com.example.profile.ui.ProfileScreen
 import com.example.profile.ui.SettingsScreen
+import com.example.profile.ui.StatisticsScreen
+import com.example.profile.viewmodel.StatisticsViewModel
 import com.example.search.ui.FilterSearchResultScreen
 import com.example.search.ui.FiltersScreen
 import com.example.search.ui.SearchScreen
@@ -78,6 +81,7 @@ fun AppNavigation(
     usersViewModel: UsersViewModel,
     searchViewModel: SearchViewModel,
     authViewModel: AuthViewModel,
+    statisticsViewModel: StatisticsViewModel,
     onThemeChanged: (Boolean) -> Unit,
     currentAccentHex: String,
     onAccentColorChanged: (String) -> Unit,
@@ -318,6 +322,7 @@ fun AppNavigation(
                 ProfileScreen(
                     paddingValues = innerPadding,
                     onSettingsClicked = { navController.navigate(ScreenSettings) },
+                    onStatisticsClicked = { navController.navigate(ScreenStatistics) },
                     onLogOut = {
                         botBarState = false
                         selectedTab = BotBarState.Home
@@ -340,6 +345,13 @@ fun AppNavigation(
                     onBackClicked = { navController.popBackStack() },
                     currentAccentHex = currentAccentHex,
                     onAccentColorChanged = onAccentColorChanged
+                )
+            }
+            composable<ScreenStatistics> {
+                StatisticsScreen(
+                    paddingValues = innerPadding,
+                    viewModel = statisticsViewModel,
+                    onBackClicked = { navController.popBackStack() }
                 )
             }
             composable<ScreenMovie> {
