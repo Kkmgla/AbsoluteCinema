@@ -115,13 +115,21 @@ fun CompletionRatePage(
                             fontSize = 14.sp,
                             modifier = Modifier.padding(bottom = 12.dp),
                         )
-                        Text(
-                            text = stringResource(R.string.completion_rate_info_formula),
-                            color = MaterialTheme.colorScheme.primary,
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier.padding(bottom = 4.dp),
-                        )
+                        Surface(
+                            shape = RoundedCornerShape(12.dp),
+                            color = MaterialTheme.colorScheme.surfaceVariant,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 12.dp),
+                        ) {
+                            Text(
+                                text = stringResource(R.string.completion_rate_info_formula),
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 14.sp,
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier.padding(16.dp),
+                            )
+                        }
                         Text(
                             text = stringResource(R.string.completion_rate_info_where),
                             color = MaterialTheme.colorScheme.secondary,
