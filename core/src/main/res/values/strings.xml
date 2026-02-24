@@ -25,6 +25,12 @@
     <string name="Watched">Просмотрено</string>
     <string name="Dropped">Брошено</string>
     <string name="settings">Настройки</string>
+    <string name="theme_style_label">Стиль темы</string>
+    <string name="theme_style_light">Light</string>
+    <string name="theme_style_dark">Dark</string>
+    <string name="theme_style_ultramarine">Ultramarine</string>
+    <string name="theme_style_graphite">Graphite</string>
+    <string name="theme_style_soft_light">Soft Light</string>
     <string name="main_color">Акцент</string>
     <string name="choose_color">Выберите цвет</string>
     <string name="about_app">О приложении</string>

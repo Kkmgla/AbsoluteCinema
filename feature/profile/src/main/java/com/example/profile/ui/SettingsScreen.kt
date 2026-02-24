@@ -1,6 +1,5 @@
 package com.example.profile.ui
 
-import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -15,48 +14,37 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import com.example.core.ui.AccentHexOptions
 import com.example.core.ui.LocalAccentColor
+import com.example.core.ui.ThemeStyle
+import com.example.core.ui.nextCompatibleAccentHex
+import com.example.core.ui.nextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.edit
-
-
-private val ACCENT_COLOR_OPTIONS = listOf(
-    "#FF8000",
-    "#CD4A4C",
-    "#9B2D30",
-    "#FF8C42",
-    "#FFB84C",
-    "#F26B38",
-    "#5D76CB",
-    "#4169E1"
-)
 
 @Composable
 fun SettingsScreen(
     paddingValues: PaddingValues = PaddingValues(),
-    onThemeChanged: (Boolean) -> Unit,
+    currentThemeStyle: ThemeStyle,
+    onThemeStyleChanged: (ThemeStyle) -> Unit,
     onBackClicked: () -> Unit = {},
     currentAccentHex: String = "#FF8000",
     onAccentColorChanged: (String) -> Unit = {},
 ) {
-    val context = LocalContext.current
-    val sharedPreferences = remember { context.getSharedPreferences("theme_prefs", Context.MODE_PRIVATE) }
-    val isDarkTheme = remember { mutableStateOf(sharedPreferences.getBoolean("dark_theme", false)) }
     val accentColor = LocalAccentColor.current
+    val currentThemeStyleText = when (currentThemeStyle) {
+        ThemeStyle.Light -> stringResource(com.example.core.R.string.theme_style_light)
+        ThemeStyle.Dark -> stringResource(com.example.core.R.string.theme_style_dark)
+        ThemeStyle.Ultramarine -> stringResource(com.example.core.R.string.theme_style_ultramarine)
+        ThemeStyle.Graphite -> stringResource(com.example.core.R.string.theme_style_graphite)
+        ThemeStyle.SoftLight -> stringResource(com.example.core.R.string.theme_style_soft_light)
+    }
 
 
     Column(
@@ -108,20 +96,18 @@ fun SettingsScreen(
                     .fillMaxWidth()
                     .fillMaxSize()
                     .padding(horizontal = 16.dp)
-                    .clickable {
-
-                    },
+                    .clickable { },
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text("Выбрать язык", fontSize = 20.sp, color = MaterialTheme.colorScheme.primary)
-                TextButton(
-                    onClick = {
-
-                    }
-                ) {
-                    Text("Русский", fontSize = 20.sp, color = MaterialTheme.colorScheme.secondary)
-                }
+                Text(
+                    text = "Русский",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = accentColor,
+                    modifier = Modifier.clickable { }
+                )
             }
         }
 
@@ -149,18 +135,19 @@ fun SettingsScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
-                Text("Стиль темы", fontSize = 20.sp, color = MaterialTheme.colorScheme.primary)
-                Switch(
-                    checked = isDarkTheme.value,
-                    onCheckedChange = { checked ->
-                        isDarkTheme.value = checked
-                        sharedPreferences.edit { putBoolean("dark_theme", checked) }
-                        onThemeChanged(checked)
+                Text(
+                    stringResource(com.example.core.R.string.theme_style_label),
+                    fontSize = 20.sp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = currentThemeStyleText,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = accentColor,
+                    modifier = Modifier.clickable {
+                        onThemeStyleChanged(currentThemeStyle.nextStyle())
                     },
-                    colors = SwitchDefaults.colors(
-                        checkedTrackColor = accentColor,
-                        checkedThumbColor = colorResource(com.example.core.R.color.white)
-                    )
                 )
             }
         }
@@ -196,10 +183,14 @@ fun SettingsScreen(
                 Text(
                     text = currentAccentHex.uppercase(),
                     fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
                     color = accentColor,
                     modifier = Modifier.clickable {
-                        val index = ACCENT_COLOR_OPTIONS.indexOfFirst { it.equals(currentAccentHex, ignoreCase = true) }.takeIf { it >= 0 } ?: 0
-                        val nextHex = ACCENT_COLOR_OPTIONS[(index + 1) % ACCENT_COLOR_OPTIONS.size]
+                        val nextHex = nextCompatibleAccentHex(
+                            currentAccentHex = currentAccentHex,
+                            themeStyle = currentThemeStyle,
+                            options = AccentHexOptions,
+                        )
                         onAccentColorChanged(nextHex)
                     }
                 )

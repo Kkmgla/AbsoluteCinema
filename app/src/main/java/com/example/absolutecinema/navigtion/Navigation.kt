@@ -75,6 +75,7 @@ import com.example.users.ui.AllWatchingScreen
 import com.example.users.ui.AllYourRatesScreen
 import com.example.users.ui.UsersScreen
 import com.example.users.viewmodel.UsersViewModel
+import com.example.core.ui.ThemeStyle
 import kotlinx.coroutines.delay
 
 @Composable
@@ -86,7 +87,8 @@ fun AppNavigation(
     searchViewModel: SearchViewModel,
     authViewModel: AuthViewModel,
     statisticsViewModel: StatisticsViewModel,
-    onThemeChanged: (Boolean) -> Unit,
+    currentThemeStyle: ThemeStyle,
+    onThemeStyleChanged: (ThemeStyle) -> Unit,
     currentAccentHex: String,
     onAccentColorChanged: (String) -> Unit,
     context: Context,
@@ -364,9 +366,8 @@ fun AppNavigation(
             composable<ScreenSettings> {
                 SettingsScreen(
                     paddingValues = innerPadding,
-                    onThemeChanged = { isDark ->
-                        onThemeChanged(isDark)
-                    },
+                    currentThemeStyle = currentThemeStyle,
+                    onThemeStyleChanged = onThemeStyleChanged,
                     onBackClicked = { navController.popBackStack() },
                     currentAccentHex = currentAccentHex,
                     onAccentColorChanged = onAccentColorChanged
