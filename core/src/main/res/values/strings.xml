@@ -37,6 +37,15 @@
     <string name="choose_color">Выберите цвет</string>
     <string name="about_app">О приложении</string>
     <string name="support">Поддержка</string>
+    <string name="bug_report">Сообщить о проблеме</string>
+    <string name="bug_report_placeholder">Опишите проблему…</string>
+    <string name="send_report">Отправить репорт</string>
+    <string name="bug_report_screen_title">Репорт</string>
+    <string name="bug_type_visual_ui">Визуал / интерфейс</string>
+    <string name="bug_type_data_mismatch">Неверные данные</string>
+    <string name="bug_type_crash">Сбой / ошибка</string>
+    <string name="bug_type_other">Другое</string>
+    <string name="back">Назад</string>
     <string name="logout">Выйти из аккаунта</string>
     <string name="cd_clear_field">Очистить поле</string>
     <string name="cd_app_logo">Логотип приложения</string>

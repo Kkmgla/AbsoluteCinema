@@ -35,6 +35,9 @@ sealed class ScreenRoutes {
     object ScreenStatistics
 
     @Serializable
+    object ScreenBugReport
+
+    @Serializable
     data class ScreenMovie(val movieId: Int)
 
     @Serializable

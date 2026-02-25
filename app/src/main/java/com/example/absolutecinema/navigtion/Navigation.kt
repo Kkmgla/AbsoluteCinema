@@ -38,6 +38,7 @@ import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenSearchFilters
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenSearchFiltersResult
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenSettings
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenStatistics
+import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenBugReport
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllDropped
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllFavourites
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllWatched
@@ -63,6 +64,7 @@ import com.example.feed.ui.AllRomanMoviesScreen
 import com.example.feed.ui.FeedScreen
 import com.example.feed.viewmodel.FeedViewModel
 import com.example.profile.ui.ProfileScreen
+import com.example.profile.ui.BugReportScreen
 import com.example.profile.ui.SettingsScreen
 import com.example.profile.ui.StatisticsScreen
 import com.example.profile.viewmodel.StatisticsViewModel
@@ -353,6 +355,7 @@ fun AppNavigation(
                     paddingValues = innerPadding,
                     onSettingsClicked = { navController.navigate(ScreenSettings) },
                     onStatisticsClicked = { navController.navigate(ScreenStatistics) },
+                    onBugReportClicked = { navController.navigate(ScreenBugReport) },
                     onLogOut = {
                         botBarState = false
                         selectedTab = BotBarState.Home
@@ -380,6 +383,12 @@ fun AppNavigation(
                 StatisticsScreen(
                     paddingValues = innerPadding,
                     viewModel = statisticsViewModel,
+                    onBackClicked = { navController.popBackStack() }
+                )
+            }
+            composable<ScreenBugReport> {
+                BugReportScreen(
+                    paddingValues = innerPadding,
                     onBackClicked = { navController.popBackStack() }
                 )
             }

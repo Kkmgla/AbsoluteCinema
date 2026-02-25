@@ -83,6 +83,7 @@ fun ProfileScreen(
     paddingValues: PaddingValues = PaddingValues(),
     onSettingsClicked: () -> Unit = {},
     onStatisticsClicked: () -> Unit = {},
+    onBugReportClicked: () -> Unit = {},
     onLogOut: () -> Unit,
     viewmodel: AuthViewModel
 ) {
@@ -257,13 +258,11 @@ fun ProfileScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 16.dp, vertical = 16.dp)
-                        .clickable {
-
-                        },
+                        .clickable { onBugReportClicked.invoke() },
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(stringResource(com.example.core.R.string.support), fontSize = 20.sp, color = MaterialTheme.colorScheme.primary)
+                    Text(stringResource(com.example.core.R.string.bug_report), fontSize = 20.sp, color = MaterialTheme.colorScheme.primary)
                     Icon(
                         Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         contentDescription = null,
