@@ -24,12 +24,13 @@ import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllComedies
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllDetectives
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllMovies
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllRomans
+import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllSequelsPrequels
+import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllSimilarMovies
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenAllSeries
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenBegin
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenDescription
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenHome
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenLogin
-import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenMovie
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenProfile
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenRegistration
 import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenSearch
@@ -47,8 +48,11 @@ import com.example.absolutecinema.navigtion.ScreenRoutes.ScreenUsers
 import com.example.core.ui.BeginScreen
 import com.example.core.ui.BotBar
 import com.example.core.ui.BotBarState
+import com.example.details.ui.AllSequelsPrequelsScreen
+import com.example.details.ui.AllSimilarMoviesScreen
 import com.example.details.ui.DescriptionScreen
 import com.example.details.ui.DetailsScreen
+import com.example.details.util.toMovie
 import com.example.details.viewmodel.DetailsViewModel
 import com.example.domain.model.Movie
 import com.example.feed.ui.AllComedyMoviesScreen
@@ -102,8 +106,7 @@ fun AppNavigation(
      * @param movie фильм, который был кликнут.
      */
     fun handleMovieClick(movie: Movie) {
-        movie.id?.let { id -> detailsViewModel.updateMovie(movieId = id) }
-        navController.navigate(ScreenMovie)
+        movie.id?.let { id -> navController.navigate("movie/$id") }
     }
 
     Scaffold(
@@ -380,11 +383,49 @@ fun AppNavigation(
                     onBackClicked = { navController.popBackStack() }
                 )
             }
-            composable<ScreenMovie> {
+            composable(
+                route = "movie/{movieId}",
+                arguments = listOf(
+                    navArgument("movieId") { type = NavType.IntType }
+                ),
+            ) { backStackEntry ->
+                val movieId = backStackEntry.arguments?.getInt("movieId") ?: 0
+                LaunchedEffect(movieId) {
+                    if (movieId != 0) detailsViewModel.updateMovie(movieId = movieId)
+                }
                 DetailsScreen(
                     paddingValues = innerPadding,
                     viewModel = detailsViewModel,
-                    onBackClicked = { navController.popBackStack() }
+                    onBackClicked = { navController.popBackStack() },
+                    onMovieClicked = { movie -> handleMovieClick(movie) },
+                    onAllSequelsClicked = {
+                        detailsViewModel.setAllSequelsList(
+                            detailsViewModel.movie.value.sequelsAndPrequels.map { it.toMovie() }
+                        )
+                        navController.navigate(ScreenAllSequelsPrequels)
+                    },
+                    onAllSimilarClicked = {
+                        detailsViewModel.setAllSimilarList(
+                            detailsViewModel.movie.value.similarMovies.map { it.toMovie() }
+                        )
+                        navController.navigate(ScreenAllSimilarMovies)
+                    },
+                )
+            }
+            composable<ScreenAllSequelsPrequels> {
+                AllSequelsPrequelsScreen(
+                    paddingValues = innerPadding,
+                    viewModel = detailsViewModel,
+                    onMovieClicked = { movie -> handleMovieClick(movie) },
+                    onBackClicked = { navController.popBackStack() },
+                )
+            }
+            composable<ScreenAllSimilarMovies> {
+                AllSimilarMoviesScreen(
+                    paddingValues = innerPadding,
+                    viewModel = detailsViewModel,
+                    onMovieClicked = { movie -> handleMovieClick(movie) },
+                    onBackClicked = { navController.popBackStack() },
                 )
             }
             composable<ScreenDescription> {

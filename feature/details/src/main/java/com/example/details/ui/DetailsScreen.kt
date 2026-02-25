@@ -67,6 +67,7 @@ import com.example.core.ui.LoadImageWithPlaceholder
 import com.example.core.ui.MovieRatingWithWreath
 import com.example.core.ui.UserScore
 import com.example.core.util.getName
+import com.example.details.util.toMovie
 import com.example.details.viewmodel.DetailsViewModel
 import com.example.domain.model.Movie
 import com.example.domain.model.MovieImage
@@ -426,6 +427,9 @@ fun DetailsScreen(
     paddingValues: PaddingValues = PaddingValues(),
     viewModel: DetailsViewModel,
     onBackClicked: () -> Unit = {},
+    onMovieClicked: (Movie) -> Unit = {},
+    onAllSequelsClicked: () -> Unit = {},
+    onAllSimilarClicked: () -> Unit = {},
 ) {
 
     val movie by viewModel.movie.collectAsState()
@@ -948,7 +952,7 @@ fun DetailsScreen(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 24.dp, bottom = 100.dp)
+                .padding(top = 24.dp)
         ) {
             Text(
                 text = "Изображения",
@@ -994,11 +998,88 @@ fun DetailsScreen(
                 }
             }
         }
+
+        if (movie.sequelsAndPrequels.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp)
+                    .height(320.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Text(
+                        text = stringResource(com.example.core.R.string.SequelsAndPrequels),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = stringResource(com.example.core.R.string.All),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = LocalAccentColor.current,
+                        modifier = Modifier.clickable { onAllSequelsClicked() }
+                    )
+                }
+                LazyRow {
+                    items(movie.sequelsAndPrequels.map { it.toMovie() }) { film ->
+                        com.example.core.ui.RowMoviePosterCard(
+                            movie = film,
+                            onMovieClicked = onMovieClicked
+                        )
+                    }
+                }
+            }
+        }
+
+        if (movie.similarMovies.isNotEmpty()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 24.dp)
+                    .height(320.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom
+                ) {
+                    Text(
+                        text = stringResource(com.example.core.R.string.SimilarMovies),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = stringResource(com.example.core.R.string.All),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = LocalAccentColor.current,
+                        modifier = Modifier.clickable { onAllSimilarClicked() }
+                    )
+                }
+                LazyRow {
+                    items(movie.similarMovies.map { it.toMovie() }) { film ->
+                        com.example.core.ui.RowMoviePosterCard(
+                            movie = film,
+                            onMovieClicked = onMovieClicked
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(100.dp))
     }
 }
-
-
-
 
 
 

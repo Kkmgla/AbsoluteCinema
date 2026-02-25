@@ -11,7 +11,9 @@ import com.example.data.local.entity.genre.GenreEntity
 import com.example.data.local.entity.genre.MovieGenreCrossRef
 import com.example.data.local.entity.person.MoviePersonCrossRef
 import com.example.data.local.entity.person.PersonSimpleEntity
+import com.example.data.local.entity.seqandpreq.MovieSequelCrossRef
 import com.example.data.local.entity.seqandpreq.SeqAndPreqEntity
+import com.example.data.local.entity.similar.MovieSimilarCrossRef
 import com.example.data.local.entity.similar.SimilarMovieEntity
 import com.example.data.mapper.DtoToEntity
 import com.example.data.mapper.EntityToDomain
@@ -256,32 +258,37 @@ class MovieRepositoryImpl(
                         year = sequel.year
                     )
                 )
-                // Похожие
-                dto.similarMovies.forEach { similar ->
-                    similarDao.addSimilar(
-                        SimilarMovieEntity(
-                            id = similar.id,
-                            name = similar.name,
-                            enName = similar.enName,
-                            alternativeName = similar.alternativeName,
-                            type = similar.type,
-                            poster = Poster(
-                                posterUrl = similar.poster?.url,
-                                posterPreviewUrl = similar.poster?.previewUrl
-                            ),
-                            rating = Rating(
-                                kp = similar.rating?.kp,
-                                imdb = similar.rating?.imdb,
-                                tmdb = similar.rating?.tmdb,
-                                filmCritics = similar.rating?.filmCritics,
-                                russianFilmCritics = similar.rating?.russianFilmCritics,
-                                await = similar.rating?.await
-                            ),
-                            year = similar.year
-                        )
-                    )
+                sequel.id?.let { sequelId ->
+                    seqAndPreqDao.addSequelToMovie(MovieSequelCrossRef(movieId = entity.id!!, sequelId = sequelId))
                 }
-
+            }
+            // Похожие фильмы
+            dto.similarMovies.forEach { similar ->
+                similarDao.addSimilar(
+                    SimilarMovieEntity(
+                        id = similar.id,
+                        name = similar.name,
+                        enName = similar.enName,
+                        alternativeName = similar.alternativeName,
+                        type = similar.type,
+                        poster = Poster(
+                            posterUrl = similar.poster?.url,
+                            posterPreviewUrl = similar.poster?.previewUrl
+                        ),
+                        rating = Rating(
+                            kp = similar.rating?.kp,
+                            imdb = similar.rating?.imdb,
+                            tmdb = similar.rating?.tmdb,
+                            filmCritics = similar.rating?.filmCritics,
+                            russianFilmCritics = similar.rating?.russianFilmCritics,
+                            await = similar.rating?.await
+                        ),
+                        year = similar.year
+                    )
+                )
+                similar.id?.let { similarId ->
+                    similarDao.addSimilarToMovie(MovieSimilarCrossRef(movieId = entity.id!!, similarId = similarId))
+                }
             }
         }
     }
@@ -303,6 +310,55 @@ class MovieRepositoryImpl(
                 positiveCount = info.positiveCount,
                 percentage = info.percentage
             )
+        }
+        // Use sequels/similar from API response when present (so they show even if DB save had issues or API returns them)
+        dto?.sequelsAndPrequels?.takeIf { it.isNotEmpty() }?.let { list ->
+            movie.sequelsAndPrequels = list.map { s ->
+                SeqAndPreq(
+                    id = s.id,
+                    name = s.name,
+                    enName = s.enName,
+                    alternativeName = s.alternativeName,
+                    type = s.type,
+                    poster = com.example.domain.model.Poster(
+                        posterUrl = s.poster?.url,
+                        posterPreviewUrl = s.poster?.previewUrl
+                    ),
+                    rating = com.example.domain.model.Rating(
+                        kp = s.rating?.kp,
+                        imdb = s.rating?.imdb,
+                        tmdb = s.rating?.tmdb,
+                        filmCritics = s.rating?.filmCritics,
+                        russianFilmCritics = s.rating?.russianFilmCritics,
+                        await = s.rating?.await
+                    ),
+                    year = s.year
+                )
+            }
+        }
+        dto?.similarMovies?.takeIf { it.isNotEmpty() }?.let { list ->
+            movie.similarMovies = list.map { s ->
+                SimilarMovie(
+                    id = s.id,
+                    name = s.name,
+                    enName = s.enName,
+                    alternativeName = s.alternativeName,
+                    type = s.type,
+                    poster = com.example.domain.model.Poster(
+                        posterUrl = s.poster?.url,
+                        posterPreviewUrl = s.poster?.previewUrl
+                    ),
+                    rating = com.example.domain.model.Rating(
+                        kp = s.rating?.kp,
+                        imdb = s.rating?.imdb,
+                        tmdb = s.rating?.tmdb,
+                        filmCritics = s.rating?.filmCritics,
+                        russianFilmCritics = s.rating?.russianFilmCritics,
+                        await = s.rating?.await
+                    ),
+                    year = s.year
+                )
+            }
         }
         return movie
     }

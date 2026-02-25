@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -268,6 +269,67 @@ fun UserRatingBadge(movie: Movie, modifier: Modifier = Modifier) {
             color = colorResource(R.color.white),
             fontSize = 12.sp
         )
+    }
+}
+
+private val ROW_POSTER_WIDTH = 133.dp
+private val ROW_POSTER_HEIGHT = 200.dp
+
+/**
+ * Poster card for horizontal rows (Feed, Details). Same size and overlays as Feed row cards.
+ */
+@Composable
+fun RowMoviePosterCard(
+    movie: Movie,
+    onMovieClicked: (Movie) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val shape = RoundedCornerShape(12.dp)
+    Column(
+        modifier = modifier
+            .width(ROW_POSTER_WIDTH)
+            .padding(end = 8.dp)
+            .clip(shape)
+            .clickable { onMovieClicked(movie) }
+    ) {
+        Box {
+            LoadImageWithPlaceholder(
+                imageUrl = movie.poster?.posterUrl,
+                placeholderResId = R.drawable.poster_placeholder,
+                modifier = Modifier
+                    .height(ROW_POSTER_HEIGHT)
+                    .width(ROW_POSTER_WIDTH),
+                contentScale = ContentScale.Crop
+            )
+            ApiRatingBadge(
+                movie = movie,
+                modifier = Modifier
+                    .align(Alignment.TopStart)
+                    .padding(top = 8.dp, start = 8.dp)
+            )
+            UserRatingBadge(
+                movie = movie,
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 8.dp, end = 8.dp)
+            )
+        }
+        Text(
+            text = movie.getName(),
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 16.sp,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
+        )
+        movie.year?.let {
+            Text(
+                text = "($it)",
+                color = MaterialTheme.colorScheme.primary,
+                fontSize = 16.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }
 

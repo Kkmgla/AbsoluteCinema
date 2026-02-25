@@ -35,7 +35,7 @@ sealed class ScreenRoutes {
     object ScreenStatistics
 
     @Serializable
-    object ScreenMovie
+    data class ScreenMovie(val movieId: Int)
 
     @Serializable
     object ScreenDescription
@@ -60,6 +60,12 @@ sealed class ScreenRoutes {
 
     @Serializable
     object ScreenAllRomans
+
+    @Serializable
+    object ScreenAllSequelsPrequels
+
+    @Serializable
+    object ScreenAllSimilarMovies
 
     @Serializable
     object ScreenAllWillWatch

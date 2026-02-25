@@ -2,6 +2,7 @@ package com.example.data.local.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.example.data.local.entity.similar.MovieSimilarCrossRef
@@ -17,10 +18,10 @@ interface SimilarDao {
     """)
     suspend fun getSimilarsForMovie(movieId: Int): List<SimilarMovieEntity>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addSimilar(similarMovieEntity: SimilarMovieEntity)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addSimilarToMovie(movieSimilarCrossRef: MovieSimilarCrossRef)
 
     @Query("DELETE FROM similarmovieentity")

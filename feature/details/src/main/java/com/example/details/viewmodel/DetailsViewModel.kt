@@ -31,6 +31,20 @@ class DetailsViewModel(
     private val _studios = MutableStateFlow<List<Studio>>(emptyList())
     val studios = _studios.asStateFlow()
 
+    private val _allSequelsList = MutableStateFlow<List<Movie>>(emptyList())
+    val allSequelsList = _allSequelsList.asStateFlow()
+
+    private val _allSimilarList = MutableStateFlow<List<Movie>>(emptyList())
+    val allSimilarList = _allSimilarList.asStateFlow()
+
+    fun setAllSequelsList(list: List<Movie>) {
+        _allSequelsList.value = list
+    }
+
+    fun setAllSimilarList(list: List<Movie>) {
+        _allSimilarList.value = list
+    }
+
     fun updateMovie(movieId: Int) = viewModelScope.launch {
         _movie.value = repository.getMovieById(id = movieId)
 
